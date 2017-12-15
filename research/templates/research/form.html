@@ -1,0 +1,74 @@
+{% extends 'research/base.html' %}
+{% block css %}
+    <link href="/static/css/table.css" rel="stylesheet">
+{% endblock %}
+{% block table %}
+<p class="bold">{{user_emp.get_department_display}}新员工培养计划调查表</p>
+<table cellspacing="0" cellpadding="0">
+    <col width="133" span="6">
+    <!--<tr>-->
+        <!--<td colspan="6" width="798">运营增值部新员工培养计划调查表</td>-->
+    <!--</tr>-->
+    <tr>
+        <td colspan="6" class="bold">基本信息</td>
+    </tr>
+    <tr>
+        <td>部门</td>
+        <td>{{user_emp.get_department_display}}</td>
+        <td>组别</td>
+        <td>{{user_emp.group}}</td>
+        <td>直接上级</td>
+        <td>{{user_emp.superior_name}}</td>
+    </tr>
+    <tr>
+        <td>培养周期</td>
+        <td>{{user_emp.get_current_section_display}}</td>
+        <td>入职天数</td>
+        <td>{{user_emp.enter_days}}</td>
+        <td>填表人</td>
+        <td>{{user_emp.name}}</td>
+    </tr>
+    <tr>
+        <td>联系方式</td>
+        <td colspan="2">{{user_emp.tel}}</td>
+        <td>填表时间</td>
+        <td colspan="2">2017年7月18日</td>
+    </tr>
+    <tr>
+        <td colspan="5" class="bold">评估事项<br>
+            （10-9分：很好；6-8分：较好；3-5分：较差；0-2分：很差）</td>
+        <td class="bold">评估分数</td>
+    </tr>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <tr>
+            {% if field.label == '评估总结' %}
+            <th colspan="6" class="center">
+                <label>{{ field.label}}</label>
+            </th>
+            </tr>
+            <tr>
+                <td colspan="6" class="center">
+                {{ field }}
+                </td>
+            {% else %}
+            <th colspan="5">
+                {{ field.label}}
+            </th>
+            <td>
+                {{ field }}
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        <!--{{form}}-->
+    <tr>
+        <td colspan="6">
+            <button type="submit">提交</button>
+        </td>
+    </tr>
+    </form>
+</table>
+
+{% endblock table %}

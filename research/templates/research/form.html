@@ -41,7 +41,7 @@
     </tr>
     <form method="post">
         {% csrf_token %}
-        {% for field in form %}
+        {% for field in user_form %}
         <tr>
             {% if field.label == '评估总结' %}
             <th colspan="6" class="center">

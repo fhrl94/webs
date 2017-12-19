@@ -10,10 +10,12 @@ from django.urls import reverse
 from research.forms import *
 from research.models import InformationEmployees
 
+section_list = ['section_one', 'section_two', 'section_three', 'section_four', 'section_five', 'section_six', ]
 
 @login_required(login_url="login")
 def index_view(request):
     # return render(request=request, template_name='research/user_form.html')
+    auto_calculate()
     user = getattr(request, 'user', None)
     # print(user.id)
     # print(user)
@@ -27,11 +29,13 @@ def index_view(request):
     form_customer = [CustomerOneForm, CustomerTwoForm, CustomerThreeForm, CustomerFourForm, CustomerFiveForm,
                      CustomerSixForm]
     form_sell = [SellOneForm, SellTwoForm, SellThreeForm, SellFourForm]
-    # TODO 根据当前填写的阶段
     if user_emp.department == "y" and user_emp.current_section[0] == "y":
         form = form_customer[int(user_emp.current_section[1]) - 1]
     elif user_emp.department == "k" and user_emp.current_section[0] == "k":
         form = form_sell[int(user_emp.current_section[1]) - 1]
+    elif user_emp.current_section == 'completed':
+        return HttpResponse("已完成所有的调查")
+    # TODO 当前无问卷调查
     else:
         return HttpResponse("部门信息错误，请联系管理员")
     if request.method == 'POST':
@@ -41,6 +45,12 @@ def index_view(request):
             new_form = user_form.save(commit=False)
             new_form.department = user_emp.department
             new_form.group = user_emp.group
+            # 新增【直接上级】、【当前阶段】、【入职天数】、【联系方式】、【入职日期】
+            new_form.superior_name = user_emp.superior_name
+            new_form.current_section = user_emp.current_section
+            new_form.enter_days = user_emp.enter_days
+            new_form.tel = user_emp.tel
+            new_form.enter_date = datetime.date.today()
             new_form.employees = user_emp
             new_form.score_sum = 0
             for one in user_form.fields:
@@ -48,11 +58,19 @@ def index_view(request):
                 if one != 'question_summary':
                     new_form.score_sum += int(user_form.cleaned_data[one])
             new_form.save()
+            print(section_list[int(user_emp.current_section[1]) - 1])
+            print(getattr(user_emp, section_list[int(user_emp.current_section[1]) - 1]))
+            setattr(user_emp, section_list[int(user_emp.current_section[1]) - 1], True)
+            user_emp.save()
+            # 保存完毕后进行计算
+            auto_calculate()
             return HttpResponseRedirect(reverse(home_form))
     else:  # 当正常访问时
         # user_form = CustomerOneForm()
         user_form = form()
-    return render(request=request, template_name='research/form.html', context={'user_form': user_form, 'user_emp': user_emp})
+    return render(request=request, template_name='research/form.html', context={
+        'user_form': user_form, 'user_emp': user_emp, 'today':datetime.date.today(),
+        'num':int(user_emp.current_section[1])})
     pass
 
 
@@ -73,7 +91,19 @@ def index_view(request):
 
 @login_required(login_url="login")
 def home_form(request):
-    return render(request, template_name='research/home.html')
+    user = getattr(request, 'user', None)
+    auto_calculate()
+    try:
+        user_emp = InformationEmployees.objects.filter(emp_user=user.id).get()
+    except:
+        return HttpResponse("用户关联错误，请联系管理员")
+    research_exist = False
+    if user_emp.current_section <= user_emp.consult_section:
+        # print("当前填写第{num}期".format(num=int(user_emp.current_section[1])))
+        research_exist = True
+    return render(request, template_name='research/home.html', context={
+        'research_exist':research_exist, 'num':int(user_emp.current_section[1]),
+    })
 
 
 def user_login(request):
@@ -103,10 +133,10 @@ def user_logout(request):
     return render(request, template_name='research/logout.html')
     pass
 
-
+# TODO 实现装饰器
 def auto_calculate():
     """
-    计算 【入职天数】、【当前阶段】、
+    计算 【入职天数】、【当前阶段】、【理论阶段】
     :return:
     """
     customer = {'28': 'y1', '49': 'y2', '77': 'y3', '105': 'y4', '133': 'y5', '161': 'y6', }
@@ -126,8 +156,23 @@ def auto_calculate():
             raise UserWarning("部门没有维护或异常")
         for section in category.keys():
             if section > one.enter_days:
-                one.current_section = category[section]
+                one.consult_section = category[section]
+        # 计算当前阶段
+        for j, consult in enumerate(section_list):
+            # print(getattr(user_emp, one))
+            if not getattr(one, consult):
+                # 部门为客发超过4期，即完成
+                if one.department == "k" and j >= 4:
+                    one.current_section = "completed"
+                    break
+                # 部门为客发，且未完成到第3期 or
+                # 部门为运值，且未全部完成（共6期）
+                # print(one.department + str(j+1))
+                one.current_section = one.department + str(j+1)
+                break
+            # 均完成，即运值已全部完成
+            else:
+                one.current_section = "completed"
         one.save()
-    print(type(result))
-    # result.commit()
+    # print(type(result))
     pass

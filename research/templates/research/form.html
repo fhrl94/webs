@@ -3,7 +3,7 @@
     <link href="/static/css/table.css" rel="stylesheet">
 {% endblock %}
 {% block table %}
-<p class="bold">{{user_emp.get_department_display}}新员工培养计划调查表</p>
+<p class="bold">{{user_emp.get_department_display}}新员工培养计划调查表——{{num}}</p>
 <table cellspacing="0" cellpadding="0">
     <col width="133" span="6">
     <!--<tr>-->
@@ -32,7 +32,7 @@
         <td>联系方式</td>
         <td colspan="2">{{user_emp.tel}}</td>
         <td>填表时间</td>
-        <td colspan="2">2017年7月18日</td>
+        <td colspan="2">{{today}}</td>
     </tr>
     <tr>
         <td colspan="5" class="bold">评估事项<br>

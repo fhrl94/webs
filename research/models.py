@@ -8,7 +8,9 @@ Score_CHOICES = (
     ('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'), ('6', '6'), ('7', '7'), ('8', '8'),
     ('9', '9'), ('10', '10'),)
 Department_CHOICES = (('y', '运营增值部'), ('k', '客户发展部'),)
-
+Section_CHOICES = (
+    ('y1', '1-28天'), ('y2', '29-49天'), ('y3', '50-77天'), ('y4', '78-105天'), ('y5', '106-133天'), ('y6', '134-161天'),
+    ('k1', '1-14天'), ('k2', '15-30天'), ('k3', '31-60天'), ('k4', '61-90天'), ('completed', "已完成"))
 
 class InformationEmployees(models.Model):
     """
@@ -25,14 +27,11 @@ class InformationEmployees(models.Model):
     #     ('z', '正式'),
     # )
 
-    Section_CHOICES = (
-        ('y1', '1-28天'), ('y2', '29-49天'), ('y3', '50-77天'), ('y4', '78-105天'), ('y5', '106-133天'), ('y6', '134-161天'),
-        ('k1', '1-14天'), ('k2', '15-30天'), ('k3', '31-60天'), ('k4', '61-90天'),)
 
     name = models.CharField('姓名', max_length=10)
     department = models.CharField('部门', max_length=1, choices=Department_CHOICES)
     group = models.CharField('组别', max_length=30)
-    superior_name = models.CharField('调查上级', max_length=10)
+    superior_name = models.CharField('直接上级', max_length=10)
     # sex = models.CharField('性别', max_length=1, choices=Sex_CHOICES)
     # level = models.CharField('级别', max_length=1, choices=Level_CHOICES)
     # position = models.CharField('岗位', max_length=20, )
@@ -50,6 +49,7 @@ class InformationEmployees(models.Model):
     section_six = models.BooleanField('阶段六')
     #  自动计算
     current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
+    consult_section = models.CharField('理论阶段', max_length=2, choices=Section_CHOICES, )
     # user_name = models.CharField('用户', max_length=50)
     # password = models.CharField('密码', max_length=20, blank=True)
     # email = models.EmailField(blank=True)
@@ -79,6 +79,11 @@ class CustomerOne(models.Model):
     question_summary = models.CharField('评估总结', max_length=200)
     department = models.CharField('部门', max_length=1, choices=Department_CHOICES, )
     group = models.CharField('组别', max_length=30, )
+    superior_name = models.CharField('直接上级', max_length=10)
+    current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
+    enter_days = models.PositiveIntegerField('入职天数', default=0)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
+    enter_date = models.DateField('入职日期', )
     employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
 
     length_field = 9
@@ -101,6 +106,11 @@ class CustomerTwo(models.Model):
     question_summary = models.CharField('评估总结', max_length=200)
     department = models.CharField('部门', max_length=1, choices=Department_CHOICES, )
     group = models.CharField('组别', max_length=30, )
+    superior_name = models.CharField('直接上级', max_length=10)
+    current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
+    enter_days = models.PositiveIntegerField('入职天数', default=0)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
+    enter_date = models.DateField('入职日期', )
     employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
 
     length_field = 5
@@ -122,6 +132,11 @@ class CustomerThree(models.Model):
     question_summary = models.CharField('评估总结', max_length=200)
     department = models.CharField('部门', max_length=1, choices=Department_CHOICES, )
     group = models.CharField('组别', max_length=30, )
+    superior_name = models.CharField('直接上级', max_length=10)
+    current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
+    enter_days = models.PositiveIntegerField('入职天数', default=0)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
+    enter_date = models.DateField('入职日期', )
     employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
 
     length_field = 5
@@ -147,6 +162,11 @@ class CustomerFour(models.Model):
     question_summary = models.CharField('评估总结', max_length=200)
     department = models.CharField('部门', max_length=1, choices=Department_CHOICES, )
     group = models.CharField('组别', max_length=30, )
+    superior_name = models.CharField('直接上级', max_length=10)
+    current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
+    enter_days = models.PositiveIntegerField('入职天数', default=0)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
+    enter_date = models.DateField('入职日期', )
     employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
 
     length_field = 9
@@ -171,6 +191,11 @@ class CustomerFive(models.Model):
     question_summary = models.CharField('评估总结', max_length=200)
     department = models.CharField('部门', max_length=1, choices=Department_CHOICES, )
     group = models.CharField('组别', max_length=30, )
+    superior_name = models.CharField('直接上级', max_length=10)
+    current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
+    enter_days = models.PositiveIntegerField('入职天数', default=0)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
+    enter_date = models.DateField('入职日期', )
     employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
     length_field = 8
 
@@ -195,6 +220,11 @@ class CustomerSix(models.Model):
     question_summary = models.CharField('评估总结', max_length=200)
     department = models.CharField('部门', max_length=1, choices=Department_CHOICES, )
     group = models.CharField('组别', max_length=30, )
+    superior_name = models.CharField('直接上级', max_length=10)
+    current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
+    enter_days = models.PositiveIntegerField('入职天数', default=0)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
+    enter_date = models.DateField('入职日期', )
     employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
     length_field = 9
 
@@ -223,6 +253,11 @@ class SellOne(models.Model):
     question_summary = models.CharField('评估总结', max_length=200)
     department = models.CharField('部门', max_length=1, choices=Department_CHOICES, )
     group = models.CharField('组别', max_length=30, )
+    superior_name = models.CharField('直接上级', max_length=10)
+    current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
+    enter_days = models.PositiveIntegerField('入职天数', default=0)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
+    enter_date = models.DateField('入职日期', )
     employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
     length_field = 10
 
@@ -252,6 +287,11 @@ class SellTwo(models.Model):
     question_summary = models.CharField('评估总结', max_length=200)
     department = models.CharField('部门', max_length=1, choices=Department_CHOICES, )
     group = models.CharField('组别', max_length=30, )
+    superior_name = models.CharField('直接上级', max_length=10)
+    current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
+    enter_days = models.PositiveIntegerField('入职天数', default=0)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
+    enter_date = models.DateField('入职日期', )
     employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
     length_field = 10
 
@@ -280,6 +320,11 @@ class SellThree(models.Model):
     question_summary = models.CharField('评估总结', max_length=200)
     department = models.CharField('部门', max_length=1, choices=Department_CHOICES, )
     group = models.CharField('组别', max_length=30, )
+    superior_name = models.CharField('直接上级', max_length=10)
+    current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
+    enter_days = models.PositiveIntegerField('入职天数', default=0)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
+    enter_date = models.DateField('入职日期', )
     employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
     length_field = 10
 
@@ -316,6 +361,11 @@ class SellFour(models.Model):
     question_summary = models.CharField('评估总结', max_length=200)
     department = models.CharField('部门', max_length=1, choices=Department_CHOICES, )
     group = models.CharField('组别', max_length=30, )
+    superior_name = models.CharField('直接上级', max_length=10)
+    current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
+    enter_days = models.PositiveIntegerField('入职天数', default=0)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
+    enter_date = models.DateField('入职日期', )
     employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
     length_field = 17
 

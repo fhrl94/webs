@@ -12,7 +12,7 @@ class InformationEmployeesAdmin(admin.ModelAdmin):
     actions = ['auto_cal', ]
 
     def auto_cal(self, request, queryset):
-        return auto_calculate()
+        return auto_calculate(None)
         pass
 
     auto_cal.short_description = "自动计算入职天数、当前阶段"

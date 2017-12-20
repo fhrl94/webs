@@ -64,8 +64,8 @@ class CustomerOneForm(forms.ModelForm):
         fields.append(self_fields[-1])
         widgets = {}
         for j, one in enumerate(self_fields[:model.length_field]):
-            widgets[one] = forms.Select(attrs={'class': 'form-contro{j}'.format(j=j), 'placeholder': '请输入分数',
-                                               'aria-describedby': 'sizing-addon{j}.format(j=j)', })
+            widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
+                                               'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
             attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
                    'rows': 3, 'cols': 80, })
@@ -79,8 +79,8 @@ class CustomerTwoForm(forms.ModelForm):
         fields.append(self_fields[-1])
         widgets = {}
         for j, one in enumerate(self_fields[:model.length_field]):
-            widgets[one] = forms.Select(attrs={'class': 'form-contro{j}'.format(j=j), 'placeholder': '请输入分数',
-                                               'aria-describedby': 'sizing-addon{j}.format(j=j)', })
+            widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
+                                               'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
             attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
                    'rows': 3, 'cols': 80, })
@@ -94,8 +94,8 @@ class CustomerThreeForm(forms.ModelForm):
         fields.append(self_fields[-1])
         widgets = {}
         for j, one in enumerate(self_fields[:model.length_field]):
-            widgets[one] = forms.Select(attrs={'class': 'form-contro{j}'.format(j=j), 'placeholder': '请输入分数',
-                                               'aria-describedby': 'sizing-addon{j}.format(j=j)', })
+            widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
+                                               'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
             attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
                    'rows': 3, 'cols': 80, })
@@ -109,8 +109,8 @@ class CustomerFourForm(forms.ModelForm):
         fields.append(self_fields[-1])
         widgets = {}
         for j, one in enumerate(self_fields[:model.length_field]):
-            widgets[one] = forms.Select(attrs={'class': 'form-contro{j}'.format(j=j), 'placeholder': '请输入分数',
-                                               'aria-describedby': 'sizing-addon{j}.format(j=j)', })
+            widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
+                                               'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
             attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
                    'rows': 3, 'cols': 80, })
@@ -124,8 +124,8 @@ class CustomerFiveForm(forms.ModelForm):
         fields.append(self_fields[-1])
         widgets = {}
         for j, one in enumerate(self_fields[:model.length_field]):
-            widgets[one] = forms.Select(attrs={'class': 'form-contro{j}'.format(j=j), 'placeholder': '请输入分数',
-                                               'aria-describedby': 'sizing-addon{j}.format(j=j)', })
+            widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
+                                               'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
             attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
                    'rows': 3, 'cols': 80, })
@@ -139,8 +139,8 @@ class CustomerSixForm(forms.ModelForm):
         fields.append(self_fields[-1])
         widgets = {}
         for j, one in enumerate(self_fields[:model.length_field]):
-            widgets[one] = forms.Select(attrs={'class': 'form-contro{j}'.format(j=j), 'placeholder': '请输入分数',
-                                               'aria-describedby': 'sizing-addon{j}.format(j=j)', })
+            widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
+                                               'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
             attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
                    'rows': 3, 'cols': 80, })
@@ -154,8 +154,8 @@ class SellOneForm(forms.ModelForm):
         fields.append(self_fields[-1])
         widgets = {}
         for j, one in enumerate(self_fields[:model.length_field]):
-            widgets[one] = forms.Select(attrs={'class': 'form-contro{j}'.format(j=j), 'placeholder': '请输入分数',
-                                               'aria-describedby': 'sizing-addon{j}.format(j=j)', })
+            widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
+                                               'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
             attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
                    'rows': 3, 'cols': 80, })
@@ -169,8 +169,8 @@ class SellTwoForm(forms.ModelForm):
         fields.append(self_fields[-1])
         widgets = {}
         for j, one in enumerate(self_fields[:model.length_field]):
-            widgets[one] = forms.Select(attrs={'class': 'form-contro{j}'.format(j=j), 'placeholder': '请输入分数',
-                                               'aria-describedby': 'sizing-addon{j}.format(j=j)', })
+            widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
+                                               'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
             attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
                    'rows': 3, 'cols': 80, })
@@ -184,8 +184,8 @@ class SellThreeForm(forms.ModelForm):
         fields.append(self_fields[-1])
         widgets = {}
         for j, one in enumerate(self_fields[:model.length_field]):
-            widgets[one] = forms.Select(attrs={'class': 'form-contro{j}'.format(j=j), 'placeholder': '请输入分数',
-                                               'aria-describedby': 'sizing-addon{j}.format(j=j)', })
+            widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
+                                               'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
             attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
                    'rows': 3, 'cols': 80, })
@@ -199,8 +199,8 @@ class SellFourForm(forms.ModelForm):
         fields.append(self_fields[-1])
         widgets = {}
         for j, one in enumerate(self_fields[:model.length_field]):
-            widgets[one] = forms.Select(attrs={'class': 'form-contro{j}'.format(j=j), 'placeholder': '请输入分数',
-                                               'aria-describedby': 'sizing-addon{j}.format(j=j)', })
+            widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
+                                               'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
             attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
                    'rows': 3, 'cols': 80, })

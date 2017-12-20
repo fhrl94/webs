@@ -1,10 +1,11 @@
 {% extends 'research/base.html' %}
-{% block css %}
-    <link href="/static/css/table.css" rel="stylesheet">
+{% block bootstrap3_extra_head %}
 {% endblock %}
-{% block table %}
-<p class="bold">{{user_emp.get_department_display}}新员工培养计划调查表——{{num}}</p>
-<table cellspacing="0" cellpadding="0">
+{% block title %}{% endblock title %}
+{% block content %}
+<div class="form-group text-center">
+<table cellspacing="0" cellpadding="0" class="table table-bordered table-hover table-responsive table-striped">
+    <caption><h1 class="text-center">{{user_emp.get_department_display}}新员工培养计划调查表（第{{num}}期）</h1></caption>
     <col width="133" span="6">
     <!--<tr>-->
         <!--<td colspan="6" width="798">运营增值部新员工培养计划调查表</td>-->
@@ -39,7 +40,7 @@
             （10-9分：很好；6-8分：较好；3-5分：较差；0-2分：很差）</td>
         <td class="bold">评估分数</td>
     </tr>
-    <form method="post">
+    <form method="post" role="form">
         {% csrf_token %}
         {% for field in user_form %}
         <tr>
@@ -65,10 +66,10 @@
         <!--{{form}}-->
     <tr>
         <td colspan="6">
-            <button type="submit">提交</button>
+            <button type="submit" class="btn-success">提交</button>
         </td>
     </tr>
     </form>
 </table>
-
-{% endblock table %}
+</div>
+{% endblock content %}

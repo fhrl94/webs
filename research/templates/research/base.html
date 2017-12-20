@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}新员工培养调查表{% endblock %}</title>
-    <!-- Custom CSS -->
-    {% block css %}
-    {% endblock %}
-</head>
-<body>
-{% block table %}
+
+{% extends 'bootstrap3/bootstrap3.html' %}
+{% block bootstrap3_title %}新员工培养调查{% endblock %}
+<!--{% load bootstrap3 %}-->
+{% block bootstrap3_extra_head %}{% endblock %}
+{% block bootstrap3_content %}
+    <div class="container">
+        <h1>{% block title %}新员工培养调查{% endblock %}</h1>
+        {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
+        {% block content %}{% endblock %}
+    </div>
+
 {% endblock %}
-</body>
-</html>

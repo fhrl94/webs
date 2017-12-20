@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'research',
+    # bootstrap3 库
+    'bootstrap3',
 ]
 
 

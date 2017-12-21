@@ -18,10 +18,6 @@ from django.contrib import admin
 from research import views
 from django.contrib.auth import views as auth_views
 
-urlpatterns = [
-    url(r'^index/', view=views.index_view, name='index'),
-    url(r'^home/', view=views.home_form, name='home'),
-    url(r'^login/', view=views.user_login, name='login'),
-    url(r'^logout/', view=views.user_logout, name='logout'),
-    url(r'^', view=views.error_404, kwargs={'error_body':''}, name='error_404'),
-]
+urlpatterns = [url(r'^index/', view=views.index_view, name='index'), url(r'^home/', view=views.home_form, name='home'),
+    url(r'^login/', view=views.user_login, name='login'), url(r'^logout/', view=views.user_logout, name='logout'),
+    url(r'^', view=views.error_404, kwargs={'error_body': ''}, name='error_404'), ]

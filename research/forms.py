@@ -11,7 +11,6 @@ class UserForm(forms.Form):
     pass
 
 
-
 self_fields = ['question_one', 'question_two', 'question_three', 'question_four', 'question_five', 'question_six',
                'question_seven', 'question_eight', 'question_nine', 'question_ten', 'question_eleven',
                'question_twelve', 'question_thirteen', 'question_fourteen', 'question_fifteen', 'question_sixteen',
@@ -71,6 +70,7 @@ class CustomerOneForm(forms.ModelForm):
                    'rows': 3, 'cols': 80, })
         pass
 
+
 class CustomerTwoForm(forms.ModelForm):
     class Meta:
         model = CustomerTwo
@@ -85,6 +85,7 @@ class CustomerTwoForm(forms.ModelForm):
             attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
                    'rows': 3, 'cols': 80, })
         pass
+
 
 class CustomerThreeForm(forms.ModelForm):
     class Meta:
@@ -101,6 +102,7 @@ class CustomerThreeForm(forms.ModelForm):
                    'rows': 3, 'cols': 80, })
         pass
 
+
 class CustomerFourForm(forms.ModelForm):
     class Meta:
         model = CustomerFour
@@ -115,6 +117,7 @@ class CustomerFourForm(forms.ModelForm):
             attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
                    'rows': 3, 'cols': 80, })
         pass
+
 
 class CustomerFiveForm(forms.ModelForm):
     class Meta:
@@ -131,6 +134,7 @@ class CustomerFiveForm(forms.ModelForm):
                    'rows': 3, 'cols': 80, })
         pass
 
+
 class CustomerSixForm(forms.ModelForm):
     class Meta:
         model = CustomerSix
@@ -145,6 +149,7 @@ class CustomerSixForm(forms.ModelForm):
             attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
                    'rows': 3, 'cols': 80, })
         pass
+
 
 class SellOneForm(forms.ModelForm):
     class Meta:
@@ -161,6 +166,7 @@ class SellOneForm(forms.ModelForm):
                    'rows': 3, 'cols': 80, })
         pass
 
+
 class SellTwoForm(forms.ModelForm):
     class Meta:
         model = SellTwo
@@ -176,6 +182,7 @@ class SellTwoForm(forms.ModelForm):
                    'rows': 3, 'cols': 80, })
         pass
 
+
 class SellThreeForm(forms.ModelForm):
     class Meta:
         model = SellThree
@@ -190,6 +197,7 @@ class SellThreeForm(forms.ModelForm):
             attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
                    'rows': 3, 'cols': 80, })
         pass
+
 
 class SellFourForm(forms.ModelForm):
     class Meta:

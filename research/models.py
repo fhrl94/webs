@@ -9,8 +9,10 @@ Score_CHOICES = (
     ('9', '9'), ('10', '10'),)
 Department_CHOICES = (('y', '运营增值部'), ('k', '客户发展部'),)
 Section_CHOICES = (
-    ('y1', '1-28天'), ('y2', '29-49天'), ('y3', '50-77天'), ('y4', '78-105天'), ('y5', '106-133天'), ('y6', '134-161天'),('y0', "未开始"),
-    ('k1', '1-14天'), ('k2', '15-30天'), ('k3', '31-60天'), ('k4', '61-90天'), ('completed', "已完成"), ('k0', "未开始"))
+    ('y1', '1-28天'), ('y2', '29-49天'), ('y3', '50-77天'), ('y4', '78-105天'), ('y5', '106-133天'), ('y6', '134-161天'),
+    ('y0', "未开始"), ('k1', '1-14天'), ('k2', '15-30天'), ('k3', '31-60天'), ('k4', '61-90天'), ('completed', "已完成"),
+    ('k0', "未开始"))
+
 
 class InformationEmployees(models.Model):
     """
@@ -26,7 +28,6 @@ class InformationEmployees(models.Model):
     #     ('s', '试用'),
     #     ('z', '正式'),
     # )
-
 
     name = models.CharField('姓名', max_length=10)
     department = models.CharField('部门', max_length=1, choices=Department_CHOICES)

@@ -12,6 +12,7 @@ from research.models import InformationEmployees
 
 section_list = ['section_one', 'section_two', 'section_three', 'section_four', 'section_five', 'section_six', ]
 
+
 @login_required(login_url="login")
 def index_view(request):
     # return render(request=request, template_name='research/user_form.html')
@@ -69,9 +70,9 @@ def index_view(request):
     else:  # 当正常访问时
         # user_form = CustomerOneForm()
         user_form = form()
-    return render(request=request, template_name='research/form.html', context={
-        'user_form': user_form, 'user_emp': user_emp, 'today':datetime.date.today(),
-        'num':int(user_emp.current_section[1])})
+    return render(request=request, template_name='research/form.html',
+                  context={'user_form': user_form, 'user_emp': user_emp, 'today': datetime.date.today(),
+                           'num': int(user_emp.current_section[1])})
     pass
 
 
@@ -108,9 +109,8 @@ def home_form(request):
         # print("当前填写第{num}期".format(num=int(user_emp.current_section[1])))
         research_exist = True
         num = int(user_emp.current_section[1])
-    return render(request, template_name='research/home.html', context={
-        'research_exist':research_exist, 'num':num, 'body':body
-    })
+    return render(request, template_name='research/home.html',
+                  context={'research_exist': research_exist, 'num': num, 'body': body})
 
 
 def user_login(request):
@@ -140,21 +140,22 @@ def user_logout(request):
     return render(request, template_name='research/logout.html')
     pass
 
+
 def error_404(request, error_body):
-    return render(request, template_name='research/404.html', context={
-        'error_body':error_body,
-    })
+    return render(request, template_name='research/404.html', context={'error_body': error_body, })
     pass
+
 
 # TODO 实现装饰器
 def auto_calculate(ID):
     """
     计算 【入职天数】、【当前阶段】、【理论阶段】
+    :param ID:
     :return:
     """
-    customer = {'161': 'y6', '133': 'y5', '105': 'y4', '77': 'y3', '49': 'y2', '28': 'y1', '-1':'y0', }
-    sell = {'90': 'k4', '60': 'k3', '30': 'k2', '14': 'k1', '-1':'k0', }
-    if ID == None:
+    customer = {'161': 'y6', '133': 'y5', '105': 'y4', '77': 'y3', '49': 'y2', '28': 'y1', '-1': 'y0', }
+    sell = {'90': 'k4', '60': 'k3', '30': 'k2', '14': 'k1', '-1': 'k0', }
+    if ID is None:
         result = InformationEmployees.objects.all()
     else:
         result = InformationEmployees.objects.filter(pk=ID).all()
@@ -174,8 +175,7 @@ def auto_calculate(ID):
         for section in category.keys():
             if int(section) < int(one.enter_days):
                 one.consult_section = category[section]
-                break
-            # print(one.consult_section)
+                break  # print(one.consult_section)
         # 计算当前阶段
         for j, consult in enumerate(section_list):
             # print(getattr(user_emp, one))

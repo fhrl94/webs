@@ -51,7 +51,7 @@ self_widgets = {'question_one': forms.Select(
     'question_seventeen': forms.Select(
         attrs={'class': 'form-control', 'placeholder': '请输入分数', 'aria-describedby': 'sizing-addon17', }),
     'question_summary': forms.Textarea(
-        attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
+        attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon18',
                'rows': 3, 'cols': 80, }), }
 
 
@@ -66,7 +66,7 @@ class CustomerOneForm(forms.ModelForm):
             widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
                                                'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
-            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
+            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon18',
                    'rows': 3, 'cols': 80, })
         pass
 
@@ -82,7 +82,7 @@ class CustomerTwoForm(forms.ModelForm):
             widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
                                                'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
-            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
+            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon18',
                    'rows': 3, 'cols': 80, })
         pass
 
@@ -98,7 +98,7 @@ class CustomerThreeForm(forms.ModelForm):
             widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
                                                'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
-            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
+            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon18',
                    'rows': 3, 'cols': 80, })
         pass
 
@@ -114,7 +114,7 @@ class CustomerFourForm(forms.ModelForm):
             widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
                                                'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
-            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
+            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon18',
                    'rows': 3, 'cols': 80, })
         pass
 
@@ -130,7 +130,7 @@ class CustomerFiveForm(forms.ModelForm):
             widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
                                                'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
-            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
+            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon18',
                    'rows': 3, 'cols': 80, })
         pass
 
@@ -146,7 +146,7 @@ class CustomerSixForm(forms.ModelForm):
             widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
                                                'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
-            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
+            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon18',
                    'rows': 3, 'cols': 80, })
         pass
 
@@ -162,7 +162,7 @@ class SellOneForm(forms.ModelForm):
             widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
                                                'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
-            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
+            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon18',
                    'rows': 3, 'cols': 80, })
         pass
 
@@ -178,7 +178,7 @@ class SellTwoForm(forms.ModelForm):
             widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
                                                'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
-            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
+            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon18',
                    'rows': 3, 'cols': 80, })
         pass
 
@@ -194,7 +194,7 @@ class SellThreeForm(forms.ModelForm):
             widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
                                                'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
-            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
+            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon18',
                    'rows': 3, 'cols': 80, })
         pass
 
@@ -210,6 +210,6 @@ class SellFourForm(forms.ModelForm):
             widgets[one] = forms.Select(attrs={'class': 'form-contro', 'placeholder': '请输入分数',
                                                'aria-describedby': 'sizing-addon{j}'.format(j=j), })
         widgets['question_summary'] = forms.Textarea(
-            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon10',
+            attrs={'class': 'form-control', 'placeholder': '请输入评价(不要超过200字)', 'aria-describedby': 'sizing-addon18',
                    'rows': 3, 'cols': 80, })
         pass

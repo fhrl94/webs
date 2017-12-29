@@ -49,11 +49,12 @@ class InformationEmployees(models.Model):
     section_five = models.BooleanField('阶段五')
     section_six = models.BooleanField('阶段六')
     #  自动计算
-    current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
+    next_section = models.CharField('下个填写阶段', max_length=2, choices=Section_CHOICES, )
     consult_section = models.CharField('理论阶段', max_length=2, choices=Section_CHOICES, )
     # user_name = models.CharField('用户', max_length=50)
     # password = models.CharField('密码', max_length=20, blank=True)
     # email = models.EmailField(blank=True)
+    status = models.BooleanField('需要填写调查问卷')
     emp_user = models.OneToOneField(User, )
 
     def __str__(self):
@@ -83,14 +84,14 @@ class CustomerOne(models.Model):
     superior_name = models.CharField('直接上级', max_length=10)
     current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
     enter_days = models.PositiveIntegerField('入职天数', default=0)
-    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
-    enter_date = models.DateField('入职日期', )
-    employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')])
+    enter_date = models.DateField('填表日期', )
+    employees = models.OneToOneField(InformationEmployees, )
 
     length_field = 9
 
     def __str__(self):
-        return self.employees
+        return self.employees.name
 
     pass
 
@@ -110,14 +111,14 @@ class CustomerTwo(models.Model):
     superior_name = models.CharField('直接上级', max_length=10)
     current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
     enter_days = models.PositiveIntegerField('入职天数', default=0)
-    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
-    enter_date = models.DateField('入职日期', )
-    employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')])
+    enter_date = models.DateField('填表日期', )
+    employees = models.OneToOneField(InformationEmployees, )
 
     length_field = 5
 
     def __str__(self):
-        return self.employees
+        return self.employees.name
 
     pass
 
@@ -136,14 +137,14 @@ class CustomerThree(models.Model):
     superior_name = models.CharField('直接上级', max_length=10)
     current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
     enter_days = models.PositiveIntegerField('入职天数', default=0)
-    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
-    enter_date = models.DateField('入职日期', )
-    employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')])
+    enter_date = models.DateField('填表日期', )
+    employees = models.OneToOneField(InformationEmployees, )
 
     length_field = 5
 
     def __str__(self):
-        return self.employees
+        return self.employees.name
 
     pass
 
@@ -166,14 +167,14 @@ class CustomerFour(models.Model):
     superior_name = models.CharField('直接上级', max_length=10)
     current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
     enter_days = models.PositiveIntegerField('入职天数', default=0)
-    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
-    enter_date = models.DateField('入职日期', )
-    employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')])
+    enter_date = models.DateField('填表日期', )
+    employees = models.OneToOneField(InformationEmployees, )
 
     length_field = 9
 
     def __str__(self):
-        return self.employees
+        return self.employees.name
 
     pass
 
@@ -195,13 +196,13 @@ class CustomerFive(models.Model):
     superior_name = models.CharField('直接上级', max_length=10)
     current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
     enter_days = models.PositiveIntegerField('入职天数', default=0)
-    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
-    enter_date = models.DateField('入职日期', )
-    employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')])
+    enter_date = models.DateField('填表日期', )
+    employees = models.OneToOneField(InformationEmployees, )
     length_field = 8
 
     def __str__(self):
-        return self.employees
+        return self.employees.name
 
     pass
 
@@ -224,13 +225,13 @@ class CustomerSix(models.Model):
     superior_name = models.CharField('直接上级', max_length=10)
     current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
     enter_days = models.PositiveIntegerField('入职天数', default=0)
-    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
-    enter_date = models.DateField('入职日期', )
-    employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')])
+    enter_date = models.DateField('填表日期', )
+    employees = models.OneToOneField(InformationEmployees, )
     length_field = 9
 
     def __str__(self):
-        return self.employees
+        return self.employees.name
 
     pass
 
@@ -257,13 +258,13 @@ class SellOne(models.Model):
     superior_name = models.CharField('直接上级', max_length=10)
     current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
     enter_days = models.PositiveIntegerField('入职天数', default=0)
-    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
-    enter_date = models.DateField('入职日期', )
-    employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')])
+    enter_date = models.DateField('填表日期', )
+    employees = models.OneToOneField(InformationEmployees, )
     length_field = 10
 
     def __str__(self):
-        return self.employees
+        return self.employees.name
 
     pass
 
@@ -291,13 +292,13 @@ class SellTwo(models.Model):
     superior_name = models.CharField('直接上级', max_length=10)
     current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
     enter_days = models.PositiveIntegerField('入职天数', default=0)
-    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
-    enter_date = models.DateField('入职日期', )
-    employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')])
+    enter_date = models.DateField('填表日期', )
+    employees = models.OneToOneField(InformationEmployees, )
     length_field = 10
 
     def __str__(self):
-        return self.employees
+        return self.employees.name
 
     pass
 
@@ -324,13 +325,13 @@ class SellThree(models.Model):
     superior_name = models.CharField('直接上级', max_length=10)
     current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
     enter_days = models.PositiveIntegerField('入职天数', default=0)
-    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
-    enter_date = models.DateField('入职日期', )
-    employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')])
+    enter_date = models.DateField('填表日期', )
+    employees = models.OneToOneField(InformationEmployees, )
     length_field = 10
 
     def __str__(self):
-        return self.employees
+        return self.employees.name
 
     pass
 
@@ -365,12 +366,12 @@ class SellFour(models.Model):
     superior_name = models.CharField('直接上级', max_length=10)
     current_section = models.CharField('当前阶段', max_length=2, choices=Section_CHOICES, )
     enter_days = models.PositiveIntegerField('入职天数', default=0)
-    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
-    enter_date = models.DateField('入职日期', )
-    employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')])
+    enter_date = models.DateField('填表日期', )
+    employees = models.OneToOneField(InformationEmployees, )
     length_field = 17
 
     def __str__(self):
-        return self.employees
+        return self.employees.name
 
     pass

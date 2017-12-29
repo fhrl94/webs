@@ -1,8 +1,7 @@
 import datetime
-
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, StreamingHttpResponse
 from django.shortcuts import render
 # Create your views here.
 from django.urls import reverse
@@ -11,7 +10,9 @@ from research.forms import *
 from research.models import InformationEmployees
 
 section_list = ['section_one', 'section_two', 'section_three', 'section_four', 'section_five', 'section_six', ]
-
+form_customer = [CustomerOneForm, CustomerTwoForm, CustomerThreeForm, CustomerFourForm, CustomerFiveForm,
+                 CustomerSixForm]
+form_sell = [SellOneForm, SellTwoForm, SellThreeForm, SellFourForm]
 
 @login_required(login_url="login")
 def index_view(request):
@@ -28,16 +29,13 @@ def index_view(request):
     # 根据用户信息（部门、当前阶段）确定相应 表单
     auto_calculate(user_emp.pk)
     user_emp = InformationEmployees.objects.filter(emp_user=user.id).get()
-    form_customer = [CustomerOneForm, CustomerTwoForm, CustomerThreeForm, CustomerFourForm, CustomerFiveForm,
-                     CustomerSixForm]
-    form_sell = [SellOneForm, SellTwoForm, SellThreeForm, SellFourForm]
-    if user_emp.department == "y" and user_emp.current_section[0] == "y":
-        form = form_customer[int(user_emp.current_section[1]) - 1]
-    elif user_emp.department == "k" and user_emp.current_section[0] == "k":
-        form = form_sell[int(user_emp.current_section[1]) - 1]
-    elif user_emp.current_section == 'completed':
+    if user_emp.department == "y" and user_emp.next_section[0] == "y":
+        form = form_customer[int(user_emp.next_section[1]) - 1]
+    elif user_emp.department == "k" and user_emp.next_section[0] == "k":
+        form = form_sell[int(user_emp.next_section[1]) - 1]
+    elif user_emp.next_section == 'completed':
         return error_404(request, "已完成所有的调查")
-    # TODO 当前无问卷调查
+    #  当前无问卷调查 在Form中实现了
     else:
         return error_404(request, "部门信息错误，请联系管理员")
     if request.method == 'POST':
@@ -47,9 +45,9 @@ def index_view(request):
             new_form = user_form.save(commit=False)
             new_form.department = user_emp.department
             new_form.group = user_emp.group
-            # 新增【直接上级】、【当前阶段】、【入职天数】、【联系方式】、【入职日期】
+            # 新增【直接上级】、【当前阶段】、【入职天数】、【联系方式】、【填表日期】
             new_form.superior_name = user_emp.superior_name
-            new_form.current_section = user_emp.current_section
+            new_form.current_section = user_emp.next_section
             new_form.enter_days = user_emp.enter_days
             new_form.tel = user_emp.tel
             new_form.enter_date = datetime.date.today()
@@ -60,9 +58,9 @@ def index_view(request):
                 if one != 'question_summary':
                     new_form.score_sum += int(user_form.cleaned_data[one])
             new_form.save()
-            print(section_list[int(user_emp.current_section[1]) - 1])
-            print(getattr(user_emp, section_list[int(user_emp.current_section[1]) - 1]))
-            setattr(user_emp, section_list[int(user_emp.current_section[1]) - 1], True)
+            print(section_list[int(user_emp.next_section[1]) - 1])
+            print(getattr(user_emp, section_list[int(user_emp.next_section[1]) - 1]))
+            setattr(user_emp, section_list[int(user_emp.next_section[1]) - 1], True)
             user_emp.save()
             # 保存完毕后进行计算
             auto_calculate(user_emp.pk)
@@ -72,7 +70,7 @@ def index_view(request):
         user_form = form()
     return render(request=request, template_name='research/form.html',
                   context={'user_form': user_form, 'user_emp': user_emp, 'today': datetime.date.today(),
-                           'num': int(user_emp.current_section[1])})
+                           'num': int(user_emp.next_section[1])})
     pass
 
 
@@ -103,12 +101,13 @@ def home_form(request):
     research_exist = False
     body = '当前的无调查问卷'
     num = None
-    if user_emp.current_section == "completed":
+    if user_emp.next_section == "completed":
         body = '您已完成所有问卷'
-    elif user_emp.current_section <= user_emp.consult_section:
-        # print("当前填写第{num}期".format(num=int(user_emp.current_section[1])))
+    # 理论期数会比实际大一轮，
+    elif user_emp.next_section <= user_emp.consult_section:
+        # print("当前填写第{num}期".format(num=int(user_emp.next_section[1])))
         research_exist = True
-        num = int(user_emp.current_section[1])
+        num = int(user_emp.next_section[1])
     return render(request, template_name='research/home.html',
                   context={'research_exist': research_exist, 'num': num, 'body': body})
 
@@ -178,20 +177,67 @@ def auto_calculate(ID):
                 break  # print(one.consult_section)
         # 计算当前阶段
         for j, consult in enumerate(section_list):
+            # j 从 0 开始 需要加 1
             # print(getattr(user_emp, one))
             if not getattr(one, consult):
                 # 部门为客发超过4期，即完成
-                if one.department == "k" and j >= 4:
-                    one.current_section = "completed"
+                if one.department == "k" and j + 1 > 4:
+                    one.next_section = "completed"
                     break
                 # 部门为客发，且未完成到第3期 or
                 # 部门为运值，且未全部完成（共6期）
                 # print(one.department + str(j+1))
-                one.current_section = one.department + str(j + 1)
+                one.next_section = one.department + str(j + 1)
                 break
-            # 均完成，即运值已全部完成
-            else:
-                one.current_section = "completed"
+            # 6阶段均完成，即运值已全部完成
+            elif j + 1 > 6:
+                one.next_section = "completed"
+                break
+        if one.next_section != "completed" and one.consult_section[1] >= one.next_section[1]:
+            one.status = True
+        else:
+            one.status = False
         one.save()
     # print(type(result))
+    pass
+
+@login_required(login_url="login")
+def temp_form(request, user_form, user_emp, j):
+    return render(request=request, template_name='research/form_dump.html',
+                  context={'user_form': user_form,
+                           'user_emp': user_emp, 'num': j + 1})
+
+@login_required(login_url="login")
+def form_print(request, queryset):
+    table_customer = [CustomerOne, CustomerTwo, CustomerThree, CustomerFour, CustomerFive, CustomerSix]
+    table_sell = [SellOne, SellTwo, SellThree, SellFour]
+    # table_customer = ['CustomerOne', 'CustomerTwo', 'CustomerThree', 'CustomerFour', 'CustomerFive', 'CustomerSix']
+    # table_sell = ['SellOne', 'SellTwo', 'SellThree', 'SellFour']
+    for one in queryset:
+        # print(type(one))
+        # print(one.__dict__)
+        if one.department == "y":
+            forms = form_customer
+            tables = table_customer
+        elif one.department == "k":
+            forms = form_sell
+            tables = table_sell
+        else:
+            forms = None
+            tables = None
+            return error_404(request,"部门错误")
+        for j, table in enumerate(tables):
+            # print(type(one))
+            # print(one.__dict__)
+            # print(table)
+            print((table.objects.filter(employees=one)))
+            # if table.objects.filter(employees=one).one_none()
+            if not table.objects.filter(employees=one).exists():
+                break
+            user_form = forms[j](instance=table.objects.get(employees=one.pk))
+            html =temp_form(request, user_form, table.objects.get(employees=one.pk), j).getvalue().decode('utf-8')
+            # print(html)
+            # return render(request=request, template_name='research/form_dump.html',
+            #               context={'user_form': user_form,
+            #                        'user_emp': table.objects.get(employees=one.pk), 'num': j + 1})
     pass

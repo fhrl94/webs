@@ -23,7 +23,7 @@
     </tr>
     <tr>
         <td>培养周期</td>
-        <td>{{user_emp.get_next_section_display}}</td>
+        <td>{{user_emp.get_current_section_display}}</td>
         <td>入职天数</td>
         <td>{{user_emp.enter_days}}</td>
         <td>填表人</td>
@@ -33,7 +33,7 @@
         <td>联系方式</td>
         <td colspan="2">{{user_emp.tel}}</td>
         <td>填表时间</td>
-        <td colspan="2">{{today}}</td>
+        <td colspan="2">{{user_emp.enter_date}}</td>
     </tr>
     <tr>
         <td colspan="5" class="bold">评估事项<br>
@@ -64,11 +64,11 @@
         </tr>
         {% endfor %}
         <!--{{form}}-->
-    <tr>
-        <td colspan="6">
-            <button type="submit" class="btn-success">提交</button>
-        </td>
-    </tr>
+    <!--<tr>-->
+        <!--<td colspan="6">-->
+            <!--<button type="submit" class="btn-success">提交</button>-->
+        <!--</td>-->
+    <!--</tr>-->
     </form>
 </table>
 </div>

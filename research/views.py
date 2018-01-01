@@ -1,10 +1,19 @@
 import datetime
+
+import os
+import time
+import zipfile
+
+import sys
+
+import re
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, StreamingHttpResponse
 from django.shortcuts import render
 # Create your views here.
 from django.urls import reverse
+from django.utils.http import urlquote
 
 from research.forms import *
 from research.models import InformationEmployees
@@ -209,13 +218,26 @@ def temp_form(request, user_form, user_emp, j):
 
 @login_required(login_url="login")
 def form_print(request, queryset):
+    """
+    获取所选取人员的已填表单,
+    :param request:
+    :param queryset:
+    :return:
+    """
+    # 生存临时目录,并删除历史文件
+    clear_temp()
+    temp_path = sys.path[0] + '/research/temp/'
+    if not os.path.exists(temp_path):
+        os.mkdir(temp_path)
     table_customer = [CustomerOne, CustomerTwo, CustomerThree, CustomerFour, CustomerFive, CustomerSix]
     table_sell = [SellOne, SellTwo, SellThree, SellFour]
     # table_customer = ['CustomerOne', 'CustomerTwo', 'CustomerThree', 'CustomerFour', 'CustomerFive', 'CustomerSix']
     # table_sell = ['SellOne', 'SellTwo', 'SellThree', 'SellFour']
+    zip_name_list = []
     for one in queryset:
         # print(type(one))
         # print(one.__dict__)
+        file_name_list = []
         if one.department == "y":
             forms = form_customer
             tables = table_customer
@@ -230,14 +252,79 @@ def form_print(request, queryset):
             # print(type(one))
             # print(one.__dict__)
             # print(table)
-            print((table.objects.filter(employees=one)))
             # if table.objects.filter(employees=one).one_none()
             if not table.objects.filter(employees=one).exists():
                 break
-            user_form = forms[j](instance=table.objects.get(employees=one.pk))
-            html =temp_form(request, user_form, table.objects.get(employees=one.pk), j).getvalue().decode('utf-8')
-            # print(html)
-            # return render(request=request, template_name='research/form_dump.html',
-            #               context={'user_form': user_form,
-            #                        'user_emp': table.objects.get(employees=one.pk), 'num': j + 1})
+            question = table.objects.get(employees=one.pk)
+            print((question))
+            user_form = forms[j](instance=question)
+            html =temp_form(request, user_form, question, j).getvalue().decode('utf-8')
+            # html = html.replace(r'//maxcdn', r'https://cdn')
+            html = re.sub(r'<link href=.+ rel="stylesheet">',
+                          r'<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">',
+                          html)
+            # TODO 后期分类
+            html_name = temp_path + '{emp_name}第{num}期问卷-主管{superior_name}.html'.format(
+                emp_name=one.name, num=j + 1, superior_name=question.superior_name
+            )
+            with open(file=html_name, mode='w', encoding='utf-8') as f:
+                f.write(html)
+            file_name_list.append(html_name)
+        # zip(file_name_list, one.superior_name)
+        zip_name = '{zip_name}-共{num}份.zip'.format(
+        zip_name=one.superior_name,num=len(file_name_list))
+        zip(file_name_list, zip_name, path='/research/zip/')
+        zip_name_list.append(sys.path[0] + '/research/zip/' + zip_name)
+    result_name = "新人培养调查表单-主管{num}-{now}.zip".format(
+        num=len(zip_name_list), now=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+    )
+    zip(zip_name_list, result_name, path='/research/result/')
+    return download_file(sys.path[0] + '/research/result/' + result_name, '新人培养调查问卷原始表', 'zip')
     pass
+
+def zip(file_names, zip_name, path):
+    """
+    根据 file_names 打包文件
+    :param file_names:
+    :param zip_name:
+    :return:
+    """
+    zip_path = sys.path[0] + path
+    if not os.path.exists(zip_path):
+        os.mkdir(zip_path)
+    with zipfile.ZipFile(zip_path + zip_name, 'w', zipfile.ZIP_DEFLATED) as f:
+        for file in file_names:
+            f.write(file, os.path.basename(file))
+
+    pass
+
+def clear_temp():
+    """
+    清除上次生产的文件
+    :return:
+    """
+    temp_dir_list = ['/research/zip/', '/research/temp/', '/research/result/']
+    for one in temp_dir_list:
+        if not os.path.exists(sys.path[0] + one):
+            os.mkdir(sys.path[0] + one)
+        for del_file in os.listdir(sys.path[0] + one):
+            os.remove(sys.path[0] + one + del_file)
+    pass
+
+def file_iterator(file_name, chunk_size=512):
+    with open(file_name, 'rb') as f:
+        while True:
+            c = f.read(chunk_size)
+            if c:
+                yield c
+            else:
+                break
+
+def download_file(file_path_name, download_file_name, category):
+    response = StreamingHttpResponse(file_iterator(file_path_name))
+    response['Content-Type'] = 'application/octet-stream'
+    response['Content-Disposition'] = 'attachment;filename="{name}{now}.{category}"'.format(
+        name=urlquote(download_file_name),
+        now=(time.strftime('%Y-%m-%d_%H-%M-%S', time.localtime(time.time()))),
+        category=category)
+    return response

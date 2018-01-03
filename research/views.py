@@ -22,6 +22,9 @@ section_list = ['section_one', 'section_two', 'section_three', 'section_four', '
 form_customer = [CustomerOneForm, CustomerTwoForm, CustomerThreeForm, CustomerFourForm, CustomerFiveForm,
                  CustomerSixForm]
 form_sell = [SellOneForm, SellTwoForm, SellThreeForm, SellFourForm]
+table_customer = [CustomerOne, CustomerTwo, CustomerThree, CustomerFour, CustomerFive, CustomerSix]
+table_sell = [SellOne, SellTwo, SellThree, SellFour]
+
 
 @login_required(login_url="login")
 def index_view(request):
@@ -210,11 +213,12 @@ def auto_calculate(ID):
     # print(type(result))
     pass
 
+
 @login_required(login_url="login")
-def temp_form(request, user_form, user_emp, j):
+def temp_form(request, user_form, user_emp, j, one):
     return render(request=request, template_name='research/form_dump.html',
-                  context={'user_form': user_form,
-                           'user_emp': user_emp, 'num': j + 1})
+                  context={'user_form': user_form, 'user_emp': user_emp, 'num': j + 1, 'one': one})
+
 
 @login_required(login_url="login")
 def form_print(request, queryset):
@@ -226,14 +230,9 @@ def form_print(request, queryset):
     """
     # 生存临时目录,并删除历史文件
     clear_temp()
-    temp_path = sys.path[0] + '/research/temp/'
-    if not os.path.exists(temp_path):
-        os.mkdir(temp_path)
-    table_customer = [CustomerOne, CustomerTwo, CustomerThree, CustomerFour, CustomerFive, CustomerSix]
-    table_sell = [SellOne, SellTwo, SellThree, SellFour]
     # table_customer = ['CustomerOne', 'CustomerTwo', 'CustomerThree', 'CustomerFour', 'CustomerFive', 'CustomerSix']
     # table_sell = ['SellOne', 'SellTwo', 'SellThree', 'SellFour']
-    zip_name_list = []
+    zip_name_dict = {}
     for one in queryset:
         # print(type(one))
         # print(one.__dict__)
@@ -247,7 +246,7 @@ def form_print(request, queryset):
         else:
             forms = None
             tables = None
-            return error_404(request,"部门错误")
+            return error_404(request, "部门错误")
         for j, table in enumerate(tables):
             # print(type(one))
             # print(one.__dict__)
@@ -256,37 +255,72 @@ def form_print(request, queryset):
             if not table.objects.filter(employees=one).exists():
                 break
             question = table.objects.get(employees=one.pk)
-            print((question))
+            # print((question))
             user_form = forms[j](instance=question)
-            html =temp_form(request, user_form, question, j).getvalue().decode('utf-8')
+            html = temp_form(request, user_form, question, j, one).getvalue().decode('utf-8')
             # html = html.replace(r'//maxcdn', r'https://cdn')
             html = re.sub(r'<link href=.+ rel="stylesheet">',
                           r'<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">',
                           html)
             # TODO 后期分类
-            html_name = temp_path + '{emp_name}第{num}期问卷-主管{superior_name}.html'.format(
-                emp_name=one.name, num=j + 1, superior_name=question.superior_name
-            )
-            with open(file=html_name, mode='w', encoding='utf-8') as f:
+            html_name = '{emp_name}-第{num}期问卷-{superior_name}.html'.format(emp_name=one.name, num=j + 1,
+                                                                           superior_name=question.superior_name)
+            html_name = reg_exp(html_name)
+            with open(file=sys.path[0] + '/research/temp/' + html_name, mode='w', encoding='utf-8') as f:
                 f.write(html)
-            file_name_list.append(html_name)
-        # zip(file_name_list, one.superior_name)
-        zip_name = '{zip_name}-共{num}份.zip'.format(
-        zip_name=one.superior_name,num=len(file_name_list))
-        zip(file_name_list, zip_name, path='/research/zip/')
-        zip_name_list.append(sys.path[0] + '/research/zip/' + zip_name)
-    result_name = "新人培养调查表单-主管{num}-{now}.zip".format(
-        num=len(zip_name_list), now=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-    )
-    zip(zip_name_list, result_name, path='/research/result/')
-    return download_file(sys.path[0] + '/research/result/' + result_name, '新人培养调查问卷原始表', 'zip')
+            file_name_list.append(sys.path[0] + '/research/temp/' + html_name)
+        #  没有则不生成zip文件
+        if len(file_name_list) != 0:
+            zip_name = '{group}-{zip_name}-主管{superior_name}-共{num}份.zip_pack'.format(group=one.group, zip_name=one.name,
+                                                                                 superior_name=one.superior_name,
+                                                                                 num=len(file_name_list))
+            zip_name = reg_exp(zip_name)
+            zip_pack(file_name_list, zip_name, path='/research/zip_pack/')
+            if not zip_name_dict.get(one.superior_name, False):
+                zip_name_dict[one.superior_name] = []
+            zip_name_dict[one.superior_name].append(sys.path[0] + '/research/zip_pack/' + zip_name)
+    reg_result = r'(^.+/)(.*?)-'
+    download_list = []
+    for key, value in zip_name_dict.items():
+        print(key)
+        # for one in value:
+        #     # print(one)
+        #     result_name = '{group}-{superior_name}-{num}.zip_pack'.format(
+        #         group=re.search(reg_result, one).group(2), superior_name=key, num=len(one))
+        #     zip_pack(one, result_name, path='/research/result/')
+        result_name = '{group}-{superior_name}-{num}.zip_pack'.format(group=re.search(reg_result, value[0]).group(2),
+                                                                 superior_name=key, num=len(value))
+        zip_pack(value, result_name, path='/research/result/')
+        download_list.append(sys.path[0] + '/research/result/' + result_name)
+    download_name = "新员工培养调查表-员工{num}人-{now}.zip_pack".format(num=len(zip_name_dict),
+                                                         now=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
+    zip_pack(download_list, download_name, path='/research/download/', )
+    # zip_pack()
+    # result_name = "新员工培养调查表-员工{num}人-{now}.zip_pack".format(
+    #     num=len(zip_name_dict), now=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+    # )
+    # zip_pack(zip_name_dict, result_name, path='/research/result/')
+    return download_file(sys.path[0] + '/research/download/' + download_name, '新人培养调查问卷原始表', 'zip_pack')
     pass
 
-def zip(file_names, zip_name, path):
+
+def reg_exp(re_string):
+    """
+    替换 /|\:*?"<> 为_
+    :param re_string:
+    :return:
+    """
+    special_string = r'/|\:*?"<>'
+    return re.sub(special_string, '_', re_string)
+    pass
+
+
+def zip_pack(file_names, zip_name, path):
     """
     根据 file_names 打包文件
-    :param file_names:
-    :param zip_name:
+    :param file_names: 文件路径列表
+    :param zip_name:  zip文件名称
+    :param path: 文件路径
     :return:
     """
     zip_path = sys.path[0] + path
@@ -294,22 +328,26 @@ def zip(file_names, zip_name, path):
         os.mkdir(zip_path)
     with zipfile.ZipFile(zip_path + zip_name, 'w', zipfile.ZIP_DEFLATED) as f:
         for file in file_names:
-            f.write(file, os.path.basename(file))
+            print(file)
+            if os.path.exists(file):
+                f.write(file, os.path.basename(file))
 
     pass
+
 
 def clear_temp():
     """
     清除上次生产的文件
     :return:
     """
-    temp_dir_list = ['/research/zip/', '/research/temp/', '/research/result/']
+    temp_dir_list = ['/research/zip_pack/', '/research/temp/', '/research/result/', '/research/download/']
     for one in temp_dir_list:
         if not os.path.exists(sys.path[0] + one):
             os.mkdir(sys.path[0] + one)
         for del_file in os.listdir(sys.path[0] + one):
             os.remove(sys.path[0] + one + del_file)
     pass
+
 
 def file_iterator(file_name, chunk_size=512):
     with open(file_name, 'rb') as f:
@@ -320,11 +358,11 @@ def file_iterator(file_name, chunk_size=512):
             else:
                 break
 
+
 def download_file(file_path_name, download_file_name, category):
     response = StreamingHttpResponse(file_iterator(file_path_name))
     response['Content-Type'] = 'application/octet-stream'
     response['Content-Disposition'] = 'attachment;filename="{name}{now}.{category}"'.format(
-        name=urlquote(download_file_name),
-        now=(time.strftime('%Y-%m-%d_%H-%M-%S', time.localtime(time.time()))),
+        name=urlquote(download_file_name), now=(time.strftime('%Y-%m-%d_%H-%M-%S', time.localtime(time.time()))),
         category=category)
     return response

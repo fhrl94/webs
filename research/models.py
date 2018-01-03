@@ -31,14 +31,15 @@ class InformationEmployees(models.Model):
 
     name = models.CharField('姓名', max_length=10)
     department = models.CharField('部门', max_length=1, choices=Department_CHOICES)
-    group = models.CharField('组别', max_length=30)
+    group = models.CharField('组别', max_length=30,
+                             validators=[RegexValidator(r'[^/|\:*?"<>]*')])
     superior_name = models.CharField('直接上级', max_length=10)
     # sex = models.CharField('性别', max_length=1, choices=Sex_CHOICES)
     # level = models.CharField('级别', max_length=1, choices=Level_CHOICES)
     # position = models.CharField('岗位', max_length=20, )
     enter_date = models.DateField('入职日期', )
     #  正则验证
-    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^^[\d]{11}')], unique=True)
+    tel = models.CharField('联系方式', max_length=11, validators=[RegexValidator(r'^[\d]{11}')], unique=True)
     #  自动计算
     enter_days = models.PositiveIntegerField('入职天数', default=0)
     #  主键关联

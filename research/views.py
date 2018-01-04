@@ -7,6 +7,8 @@ import zipfile
 import sys
 
 import re
+
+import xlsxwriter
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, StreamingHttpResponse
@@ -187,13 +189,13 @@ def auto_calculate(ID):
             if int(section) < int(one.enter_days):
                 one.consult_section = category[section]
                 break  # print(one.consult_section)
-        # 计算当前阶段
+        # 计算下个阶段
         for j, consult in enumerate(section_list):
             # j 从 0 开始 需要加 1
             # print(getattr(user_emp, one))
             if not getattr(one, consult):
                 # 部门为客发超过4期，即完成
-                if one.department == "k" and j + 1 > 4:
+                if one.department == "k" and j + 1 >= 4:
                     one.next_section = "completed"
                     break
                 # 部门为客发，且未完成到第3期 or
@@ -202,7 +204,7 @@ def auto_calculate(ID):
                 one.next_section = one.department + str(j + 1)
                 break
             # 6阶段均完成，即运值已全部完成
-            elif j + 1 > 6:
+            elif j + 1 >= 6:
                 one.next_section = "completed"
                 break
         if one.next_section != "completed" and one.consult_section[1] >= one.next_section[1]:
@@ -254,6 +256,9 @@ def form_print(request, queryset):
             # if table.objects.filter(employees=one).one_none()
             if not table.objects.filter(employees=one).exists():
                 break
+            # 此处使用 filter ，返回 QuerySet
+            # 使用 get 返回 model 类型， forms 需要 model 类型
+            # print(type(table.objects.get(employees=one.pk)), type(table.objects.filter(employees=one)))
             question = table.objects.get(employees=one.pk)
             # print((question))
             user_form = forms[j](instance=question)
@@ -282,12 +287,7 @@ def form_print(request, queryset):
     reg_result = r'(^.+/)(.*?)-'
     download_list = []
     for key, value in zip_name_dict.items():
-        print(key)
-        # for one in value:
-        #     # print(one)
-        #     result_name = '{group}-{superior_name}-{num}.zip'.format(
-        #         group=re.search(reg_result, one).group(2), superior_name=key, num=len(one))
-        #     zip_pack(one, result_name, path='/research/result/')
+        # print(key)
         result_name = '{group}-{superior_name}-{num}.zip'.format(group=re.search(reg_result, value[0]).group(2),
                                                                  superior_name=key, num=len(value))
         zip_pack(value, result_name, path='/research/result/')
@@ -295,11 +295,6 @@ def form_print(request, queryset):
     download_name = "新员工培养调查表-员工{num}人-{now}.zip".format(num=len(zip_name_dict),
                                                          now=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
     zip_pack(download_list, download_name, path='/research/download/', )
-    # zip_pack()
-    # result_name = "新员工培养调查表-员工{num}人-{now}.zip".format(
-    #     num=len(zip_name_dict), now=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-    # )
-    # zip_pack(zip_name_dict, result_name, path='/research/result/')
     return download_file(sys.path[0] + '/research/download/' + download_name, '新人培养调查问卷原始表', 'zip')
     pass
 
@@ -328,7 +323,7 @@ def zip_pack(file_names, zip_name, path):
         os.mkdir(zip_path)
     with zipfile.ZipFile(zip_path + zip_name, 'w', zipfile.ZIP_DEFLATED) as f:
         for file in file_names:
-            print(file)
+            # print(file)
             if os.path.exists(file):
                 f.write(file, os.path.basename(file))
 
@@ -340,7 +335,8 @@ def clear_temp():
     清除上次生产的文件
     :return:
     """
-    temp_dir_list = ['/research/zip/', '/research/temp/', '/research/result/', '/research/download/']
+    temp_dir_list = ['/research/zip/', '/research/temp/', '/research/result/', '/research/download/',
+                     '/research/excel/']
     for one in temp_dir_list:
         if not os.path.exists(sys.path[0] + one):
             os.mkdir(sys.path[0] + one)
@@ -366,3 +362,102 @@ def download_file(file_path_name, download_file_name, category):
         name=urlquote(download_file_name), now=(time.strftime('%Y-%m-%d_%H-%M-%S', time.localtime(time.time()))),
         category=category)
     return response
+
+
+@login_required(login_url="login")
+def excel_download(request, queryset):
+    clear_temp()
+    # department_dict = {'k': '客发汇总表', 'y': '运值汇总表'}
+    # workbook = xlsxwriter.Workbook(sys.path[0] + '/research/excel/' + '新员工培养调查.xlsx')
+    # for key in department_dict.keys():
+    #     worksheet = workbook.get_worksheet_by_name(department_dict[key])
+    #     if worksheet is None:
+    #         worksheet = workbook.add_worksheet(department_dict[key])
+    #         # TODO 表头
+    result_dict = {}
+    for one in queryset:
+        if one.department == "y":
+            tables = table_customer
+        elif one.department == "k":
+            tables = table_sell
+        else:
+            tables = None
+            return error_404(request, "部门错误")
+        emp_research_list = []
+        for table in tables:
+            if not table.objects.filter(employees=one).exists():
+                break
+            question = table.objects.filter(employees=one.pk)
+            # print(question.values())
+            emp_research_list += question.values()  # for key, value in question.iterator():  #     print(key, value)  # print(question.values_list())
+        if not result_dict.get(one.department, False):
+            result_dict[one.department] = {}
+        # print(emp_research_list)
+        if len(emp_research_list) != 0:
+            result_dict[one.department][
+                one.name] = emp_research_list  # excel_write('新员工培养调查.xlsx', '/research/excel/', emp_research_list, one.department,)
+    # print(result_dict)
+    name = '新员工培养调查.xlsx'
+    excel_write('新员工培养调查.xlsx', '/research/excel/', result_dict, )
+    return download_file(sys.path[0] + '/research/excel/' + name, '新员工培养调查', 'xlsx')
+    pass
+
+
+def excel_write(excel_name, path, result_dict_list, ):
+    # superior_name 需要体现出来
+    except_field = ['id', 'department', 'group', # 'superior_name',
+                    'current_section', 'enter_days', 'tel', 'enter_date', 'employees_id', ]
+    department_dict = {'k': '客发汇总表', 'y': '运值汇总表'}
+    workbook = xlsxwriter.Workbook(sys.path[0] + path + excel_name)
+    normal_format = workbook.add_format(
+        {'valign': 'vcenter', 'align': 'center',  # https://xlsxwriter.readthedocs.io/format.html
+            'top': 1,  # 上边框，后面参数是线条宽度
+            'left': 1,  # 左边框
+            'right': 1,  # 右边框
+            'bottom': 1  # 底边框
+        })
+    for group_key, group_value in result_dict_list.items():
+        worksheet = workbook.get_worksheet_by_name(department_dict[group_key])
+        if worksheet is None:
+            worksheet = workbook.add_worksheet(department_dict[group_key])
+            # worksheet.set_row(1, height='22.75', )
+            # worksheet.default_row_height = 22.75
+            worksheet.set_default_row(22.75)
+            temp_num = 1
+            worksheet.write(1, temp_num - 1, "序号", normal_format)
+            worksheet.write(1, temp_num, "姓名", normal_format)
+            if group_key == 'k':
+                table_select = table_sell
+            elif group_key == 'y':
+                table_select = table_customer
+            else:
+                raise UserWarning('无部门')
+            for j, one in enumerate(table_select):
+                # print(one.length_field)
+                for i in range(one.length_field):
+                    worksheet.write(1, temp_num + i + 1, "问题{num}".format(num=i + 1), normal_format)
+                temp_num += one.length_field
+                worksheet.write(1, temp_num + 1, "总分", normal_format)
+                worksheet.write(1, temp_num + 2, "评分", normal_format)
+                worksheet.write(1, temp_num + 3, "主管", normal_format)
+                temp_num += 3
+                print(temp_num)
+                worksheet.merge_range(0, temp_num - one.length_field - 2, 0, temp_num, "第{num}问卷调查".format(num=j + 1),
+                                      normal_format)  # worksheet.merge_range('B3:D4', 'Merged Cells', normal_format)  # TODO 表头
+        row = 2
+        # print(group_value)
+        # 运值表、客发表
+        for one_key, one_value in group_value.items():
+            # print(one_key)
+            column = 2
+            worksheet.write(row, column - 1, one_key, normal_format)
+            for one in one_value:
+                worksheet.write(row, 0, row - 1, normal_format)
+                for key, value in one.items():
+                    if key not in except_field:
+                        # print(row, column, key, value)
+                        worksheet.write(row, column, value, normal_format)
+                        column += 1
+            row += 1
+    workbook.close()
+    pass

@@ -271,36 +271,36 @@ def form_print(request, queryset):
             file_name_list.append(sys.path[0] + '/research/temp/' + html_name)
         #  没有则不生成zip文件
         if len(file_name_list) != 0:
-            zip_name = '{group}-{zip_name}-主管{superior_name}-共{num}份.zip_pack'.format(group=one.group, zip_name=one.name,
+            zip_name = '{group}-{zip_name}-主管{superior_name}-共{num}份.zip'.format(group=one.group, zip_name=one.name,
                                                                                  superior_name=one.superior_name,
                                                                                  num=len(file_name_list))
             zip_name = reg_exp(zip_name)
-            zip_pack(file_name_list, zip_name, path='/research/zip_pack/')
+            zip_pack(file_name_list, zip_name, path='/research/zip/')
             if not zip_name_dict.get(one.superior_name, False):
                 zip_name_dict[one.superior_name] = []
-            zip_name_dict[one.superior_name].append(sys.path[0] + '/research/zip_pack/' + zip_name)
+            zip_name_dict[one.superior_name].append(sys.path[0] + '/research/zip/' + zip_name)
     reg_result = r'(^.+/)(.*?)-'
     download_list = []
     for key, value in zip_name_dict.items():
         print(key)
         # for one in value:
         #     # print(one)
-        #     result_name = '{group}-{superior_name}-{num}.zip_pack'.format(
+        #     result_name = '{group}-{superior_name}-{num}.zip'.format(
         #         group=re.search(reg_result, one).group(2), superior_name=key, num=len(one))
         #     zip_pack(one, result_name, path='/research/result/')
-        result_name = '{group}-{superior_name}-{num}.zip_pack'.format(group=re.search(reg_result, value[0]).group(2),
+        result_name = '{group}-{superior_name}-{num}.zip'.format(group=re.search(reg_result, value[0]).group(2),
                                                                  superior_name=key, num=len(value))
         zip_pack(value, result_name, path='/research/result/')
         download_list.append(sys.path[0] + '/research/result/' + result_name)
-    download_name = "新员工培养调查表-员工{num}人-{now}.zip_pack".format(num=len(zip_name_dict),
+    download_name = "新员工培养调查表-员工{num}人-{now}.zip".format(num=len(zip_name_dict),
                                                          now=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
     zip_pack(download_list, download_name, path='/research/download/', )
     # zip_pack()
-    # result_name = "新员工培养调查表-员工{num}人-{now}.zip_pack".format(
+    # result_name = "新员工培养调查表-员工{num}人-{now}.zip".format(
     #     num=len(zip_name_dict), now=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
     # )
     # zip_pack(zip_name_dict, result_name, path='/research/result/')
-    return download_file(sys.path[0] + '/research/download/' + download_name, '新人培养调查问卷原始表', 'zip_pack')
+    return download_file(sys.path[0] + '/research/download/' + download_name, '新人培养调查问卷原始表', 'zip')
     pass
 
 
@@ -340,7 +340,7 @@ def clear_temp():
     清除上次生产的文件
     :return:
     """
-    temp_dir_list = ['/research/zip_pack/', '/research/temp/', '/research/result/', '/research/download/']
+    temp_dir_list = ['/research/zip/', '/research/temp/', '/research/result/', '/research/download/']
     for one in temp_dir_list:
         if not os.path.exists(sys.path[0] + one):
             os.mkdir(sys.path[0] + one)

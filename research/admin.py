@@ -33,4 +33,4 @@ class InformationEmployeesAdmin(admin.ModelAdmin):
 admin.site.register(InformationEmployees, InformationEmployeesAdmin)
 # 设置站点标题
 admin.site.site_header = '新人线上调查管理系统'
-admin.site.site_title = '新人线上调查'  # TODO 数据导出（分原始表单（HTML）、原始数据导出（excel））
+admin.site.site_title = '新人线上调查'  #  数据导出（分原始表单（HTML）、原始数据导出（excel））

@@ -30,6 +30,11 @@ table_sell = [SellOne, SellTwo, SellThree, SellFour]
 
 @login_required(login_url="login")
 def index_view(request):
+    """
+    表单填写页面
+    :param request:
+    :return:
+    """
     # return render(request=request, template_name='research/user_form.html')
     user = getattr(request, 'user', None)
     # print(user.id)
@@ -105,6 +110,11 @@ def index_view(request):
 
 @login_required(login_url="login")
 def home_form(request):
+    """
+    登录后直接跳转页面， 【首页】，提示员工是否有相关问卷需要填写
+    :param request:
+    :return:
+    """
     user = getattr(request, 'user', None)
     try:
         user_emp = InformationEmployees.objects.filter(emp_user=user.id).get()
@@ -127,6 +137,11 @@ def home_form(request):
 
 
 def user_login(request):
+    """
+    用户登录，登录成功后返回 home_form(request)
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
@@ -149,12 +164,23 @@ def user_login(request):
 
 
 def user_logout(request):
+    """
+    登出
+    :param request:
+    :return:
+    """
     logout(request)
     return render(request, template_name='research/logout.html')
     pass
 
 
 def error_404(request, error_body):
+    """
+    异常
+    :param request:
+    :param error_body: 异常原因（文本)
+    :return:
+    """
     return render(request, template_name='research/404.html', context={'error_body': error_body, })
     pass
 
@@ -162,7 +188,7 @@ def error_404(request, error_body):
 # TODO 实现装饰器
 def auto_calculate(ID):
     """
-    计算 【入职天数】、【当前阶段】、【理论阶段】
+    计算 【入职天数】、【下一阶段阶段】、【理论阶段】
     :param ID:
     :return:
     """
@@ -218,6 +244,15 @@ def auto_calculate(ID):
 
 @login_required(login_url="login")
 def temp_form(request, user_form, user_emp, j, one):
+    """
+    根据参数， 返回表单
+    :param request:
+    :param user_form: forms 中的 class
+    :param user_emp: model 中的 class
+    :param j: 期数
+    :param one: 填表人
+    :return:
+    """
     return render(request=request, template_name='research/form_dump.html',
                   context={'user_form': user_form, 'user_emp': user_emp, 'num': j + 1, 'one': one})
 
@@ -225,9 +260,14 @@ def temp_form(request, user_form, user_emp, j, one):
 @login_required(login_url="login")
 def form_print(request, queryset):
     """
-    获取所选取人员的已填表单,
+    根据【列表】，将已填写的表单存储、打包，下载。 实现功能
+    2. 填写的问卷能在线导出（美观）， 同时按列方式打包
+    * 【新人培养调查问卷原始表】
+        * 【部门-直接上级-人数】
+            * 【员工-直接上级-分数】
+                * 【员工表单-期数】
     :param request:
-    :param queryset:
+    :param queryset: 选择的人员列表
     :return:
     """
     # 生存临时目录,并删除历史文件
@@ -301,6 +341,7 @@ def form_print(request, queryset):
 
 def reg_exp(re_string):
     """
+    生成文件时，不能包含特殊符号
     替换 /|\:*?"<> 为_
     :param re_string:
     :return:
@@ -312,7 +353,7 @@ def reg_exp(re_string):
 
 def zip_pack(file_names, zip_name, path):
     """
-    根据 file_names 打包文件
+    根据 file_names 打包文件列表 ，在当前路径 + path 生成 zip 文件（zip_name）
     :param file_names: 文件路径列表
     :param zip_name:  zip文件名称
     :param path: 文件路径
@@ -346,6 +387,12 @@ def clear_temp():
 
 
 def file_iterator(file_name, chunk_size=512):
+    """
+    文件下载【迭代器】 ，节省下载的内存
+    :param file_name: 文件名称
+    :param chunk_size:
+    :return:
+    """
     with open(file_name, 'rb') as f:
         while True:
             c = f.read(chunk_size)
@@ -356,6 +403,13 @@ def file_iterator(file_name, chunk_size=512):
 
 
 def download_file(file_path_name, download_file_name, category):
+    """
+    减少下载时，大文件的内存使用
+    :param file_path_name: 文件绝对路径
+    :param download_file_name: 下载的文件名称
+    :param category: 下载的类型
+    :return:
+    """
     response = StreamingHttpResponse(file_iterator(file_path_name))
     response['Content-Type'] = 'application/octet-stream'
     response['Content-Disposition'] = 'attachment;filename="{name}{now}.{category}"'.format(
@@ -366,14 +420,14 @@ def download_file(file_path_name, download_file_name, category):
 
 @login_required(login_url="login")
 def excel_download(request, queryset):
+    """
+    表格分2类下载
+    3. 填写的数据能汇总，导出 excel 表
+    :param request:
+    :param queryset: 选择的人员列表
+    :return:
+    """
     clear_temp()
-    # department_dict = {'k': '客发汇总表', 'y': '运值汇总表'}
-    # workbook = xlsxwriter.Workbook(sys.path[0] + '/research/excel/' + '新员工培养调查.xlsx')
-    # for key in department_dict.keys():
-    #     worksheet = workbook.get_worksheet_by_name(department_dict[key])
-    #     if worksheet is None:
-    #         worksheet = workbook.add_worksheet(department_dict[key])
-    #         # TODO 表头
     result_dict = {}
     for one in queryset:
         if one.department == "y":
@@ -404,6 +458,17 @@ def excel_download(request, queryset):
 
 
 def excel_write(excel_name, path, result_dict_list, ):
+    """
+    将 result_dict_list 按规则写入到 excel 中
+    表头 自定义生成
+    :param excel_name: 生成的文件名称
+    :param path: 生成文件的路径
+    :param result_dict_list: 要写入的字典
+    --部门字典
+        --人员信息汇总字典
+            --个人信息列表
+    :return:
+    """
     # superior_name 需要体现出来
     except_field = ['id', 'department', 'group', # 'superior_name',
                     'current_section', 'enter_days', 'tel', 'enter_date', 'employees_id', ]

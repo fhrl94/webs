@@ -195,7 +195,7 @@ def auto_calculate(ID):
             # print(getattr(user_emp, one))
             if not getattr(one, consult):
                 # 部门为客发超过4期，即完成
-                if one.department == "k" and j + 1 >= 4:
+                if one.department == "k" and j + 1 > 4:
                     one.next_section = "completed"
                     break
                 # 部门为客发，且未完成到第3期 or

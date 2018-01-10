@@ -307,32 +307,32 @@ def form_print(request, queryset):
             html = re.sub(r'<link href=.+ rel="stylesheet">',
                           r'<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">',
                           html)
-            # TODO 后期分类
-            html_name = '{emp_name}-第{num}期问卷-{superior_name}.html'.format(emp_name=one.name, num=j + 1,
-                                                                           superior_name=question.superior_name)
+            #  生成 HTML 文件
+            html_name = '{emp_name}-第{num}期问卷-组别{group}-主管{superior_name}.html'.format(
+                emp_name=one.name, num=j + 1, group=question.group, superior_name=question.superior_name)
             html_name = reg_exp(html_name)
             with open(file=sys.path[0] + '/research/temp/' + html_name, mode='w', encoding='utf-8') as f:
                 f.write(html)
             file_name_list.append(sys.path[0] + '/research/temp/' + html_name)
-        #  没有则不生成zip文件
-        if len(file_name_list) != 0:
-            zip_name = '{group}-{zip_name}-主管{superior_name}-共{num}份.zip'.format(group=one.group, zip_name=one.name,
-                                                                                 superior_name=one.superior_name,
-                                                                                 num=len(file_name_list))
-            zip_name = reg_exp(zip_name)
-            zip_pack(file_name_list, zip_name, path='/research/zip/')
-            if not zip_name_dict.get(one.superior_name, False):
-                zip_name_dict[one.superior_name] = []
-            zip_name_dict[one.superior_name].append(sys.path[0] + '/research/zip/' + zip_name)
-    reg_result = r'(^.+/)(.*?)-'
+        #  生成分类字典 zip_name_dict
+        reg_zip_superior = r'组别(.*?)-主管(.*?).html'
+        for file_name in file_name_list:
+            re_result_temp = re.search(reg_zip_superior, file_name)
+            superior = re_result_temp.group(1) + "-" + re_result_temp.group(2)
+            if not zip_name_dict.get(superior, False):
+                zip_name_dict[superior] = []
+            zip_name_dict[superior].append(file_name)
+    reg_result = r'(^.*?)-(.*?$)'
     download_list = []
+    #  分类，将所有生成的 HTML 文件按照表单中填写的【直接上级】 进行汇总。可能出现兼职情况
     for key, value in zip_name_dict.items():
-        # print(key)
-        result_name = '{group}-{superior_name}-{num}.zip'.format(group=re.search(reg_result, value[0]).group(2),
-                                                                 superior_name=key, num=len(value))
+        temp_result = re.search(reg_result, key)
+        result_name = '{group}-{superior_name}-{num}份.zip'.format(
+            group=temp_result.group(2), superior_name=temp_result.group(1), num=len(value))
         zip_pack(value, result_name, path='/research/result/')
         download_list.append(sys.path[0] + '/research/result/' + result_name)
-    download_name = "新员工培养调查表-员工{num}人-{now}.zip".format(num=len(zip_name_dict),
+    #   下载的文件生成
+    download_name = "新员工培养调查表-主管{num}人-{now}.zip".format(num=len(zip_name_dict),
                                                          now=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
     zip_pack(download_list, download_name, path='/research/download/', )
     return download_file(sys.path[0] + '/research/download/' + download_name, '新人培养调查问卷原始表', 'zip')
@@ -470,7 +470,7 @@ def excel_write(excel_name, path, result_dict_list, ):
     :return:
     """
     # superior_name 需要体现出来
-    except_field = ['id', 'department', 'group', # 'superior_name',
+    except_field = ['id', 'department',# 'group', # 'superior_name',
                     'current_section', 'enter_days', 'tel', 'enter_date', 'employees_id', ]
     department_dict = {'k': '客发汇总表', 'y': '运值汇总表'}
     workbook = xlsxwriter.Workbook(sys.path[0] + path + excel_name)
@@ -484,10 +484,13 @@ def excel_write(excel_name, path, result_dict_list, ):
     for group_key, group_value in result_dict_list.items():
         worksheet = workbook.get_worksheet_by_name(department_dict[group_key])
         if worksheet is None:
+            # sheet生成
             worksheet = workbook.add_worksheet(department_dict[group_key])
             # worksheet.set_row(1, height='22.75', )
             # worksheet.default_row_height = 22.75
+            # 设置默认行高
             worksheet.set_default_row(22.75)
+            # 表头绘制
             temp_num = 1
             worksheet.write(1, temp_num - 1, "序号", normal_format)
             worksheet.write(1, temp_num, "姓名", normal_format)
@@ -504,11 +507,12 @@ def excel_write(excel_name, path, result_dict_list, ):
                 temp_num += one.length_field
                 worksheet.write(1, temp_num + 1, "总分", normal_format)
                 worksheet.write(1, temp_num + 2, "评分", normal_format)
-                worksheet.write(1, temp_num + 3, "主管", normal_format)
-                temp_num += 3
+                worksheet.write(1, temp_num + 3, "组别", normal_format)
+                worksheet.write(1, temp_num + 4, "主管", normal_format)
+                temp_num += 4
                 print(temp_num)
-                worksheet.merge_range(0, temp_num - one.length_field - 2, 0, temp_num, "第{num}问卷调查".format(num=j + 1),
-                                      normal_format)  # worksheet.merge_range('B3:D4', 'Merged Cells', normal_format)  # TODO 表头
+                worksheet.merge_range(0, temp_num - one.length_field - 3, 0, temp_num, "第{num}问卷调查".format(num=j + 1),
+                                      normal_format)  # worksheet.merge_range('B3:D4', 'Merged Cells', normal_format)
         row = 2
         # print(group_value)
         # 运值表、客发表

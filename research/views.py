@@ -75,6 +75,8 @@ def index_view(request):
             for one in user_form.fields:
                 # print(one)
                 if one != 'question_summary':
+                    if user_form.cleaned_data[one] == "":
+                        continue
                     new_form.score_sum += int(user_form.cleaned_data[one])
             new_form.save()
             print(section_list[int(user_emp.next_section[1]) - 1])

@@ -57,6 +57,9 @@ def index_view(request):
     #  当前无问卷调查 在Form中实现了
     else:
         return error_404(request, "部门信息错误，请联系管理员")
+    # 验证当前是否存在【未填写】的表单
+    if user_emp.status is not True:
+        return error_404(request, "当前没有调查问卷需要填写")
     if request.method == 'POST':
         user_form = form(request.POST)
         if user_form.is_valid():
@@ -124,18 +127,9 @@ def home_form(request):
         return error_404(request, "用户关联错误，请联系管理员")
     auto_calculate(user_emp.pk)
     user_emp = InformationEmployees.objects.filter(emp_user=user.id).get()
-    research_exist = False
-    body = '当前的无调查问卷'
-    num = None
-    if user_emp.next_section == "completed":
-        body = '您已完成所有问卷'
-    # 理论期数会比实际大一轮，
-    elif user_emp.next_section <= user_emp.consult_section:
-        # print("当前填写第{num}期".format(num=int(user_emp.next_section[1])))
-        research_exist = True
-        num = int(user_emp.next_section[1])
+    # 使用 js 来处理
     return render(request, template_name='research/home.html',
-                  context={'research_exist': research_exist, 'num': num, 'body': body})
+              context={'user_emp': user_emp,})
 
 
 def user_login(request):
@@ -296,12 +290,13 @@ def form_print(request, queryset):
             # print(one.__dict__)
             # print(table)
             # if table.objects.filter(employees=one).one_none()
-            if not table.objects.filter(employees=one).exists():
-                break
+            if not table.objects.filter(employees_id=one.pk).exists():
+                # 不存在跳过，
+                continue
             # 此处使用 filter ，返回 QuerySet
             # 使用 get 返回 model 类型， forms 需要 model 类型
             # print(type(table.objects.get(employees=one.pk)), type(table.objects.filter(employees=one)))
-            question = table.objects.get(employees=one.pk)
+            question = table.objects.get(employees_id=one.pk)
             # print((question))
             user_form = forms[j](instance=question)
             html = temp_form(request, user_form, question, j, one).getvalue().decode('utf-8')
@@ -440,10 +435,14 @@ def excel_download(request, queryset):
             tables = None
             return error_404(request, "部门错误")
         emp_research_list = []
-        for table in tables:
-            if not table.objects.filter(employees=one).exists():
-                break
-            question = table.objects.filter(employees=one.pk)
+        # excel为空，跳过
+        for num, table in enumerate(tables):
+            if not table.objects.filter(employees_id=one.pk).exists():
+                # print(table.length_field)
+                #  选项长度，跳过的格数
+                emp_research_list += [{"len":table.length_field}]
+                continue
+            question = table.objects.filter(employees_id=one.pk)
             # print(question.values())
             emp_research_list += question.values()  # for key, value in question.iterator():  #     print(key, value)  # print(question.values_list())
         if not result_dict.get(one.department, False):
@@ -508,7 +507,7 @@ def excel_write(excel_name, path, result_dict_list, ):
                     worksheet.write(1, temp_num + i + 1, "问题{num}".format(num=i + 1), normal_format)
                 temp_num += one.length_field
                 worksheet.write(1, temp_num + 1, "总分", normal_format)
-                worksheet.write(1, temp_num + 2, "评分", normal_format)
+                worksheet.write(1, temp_num + 2, "评价总结", normal_format)
                 worksheet.write(1, temp_num + 3, "组别", normal_format)
                 worksheet.write(1, temp_num + 4, "主管", normal_format)
                 temp_num += 4
@@ -516,7 +515,7 @@ def excel_write(excel_name, path, result_dict_list, ):
                 worksheet.merge_range(0, temp_num - one.length_field - 3, 0, temp_num, "第{num}问卷调查".format(num=j + 1),
                                       normal_format)  # worksheet.merge_range('B3:D4', 'Merged Cells', normal_format)
         row = 2
-        # print(group_value)
+        print(group_value)
         # 运值表、客发表
         for one_key, one_value in group_value.items():
             # print(one_key)
@@ -525,6 +524,10 @@ def excel_write(excel_name, path, result_dict_list, ):
             for one in one_value:
                 worksheet.write(row, 0, row - 1, normal_format)
                 for key, value in one.items():
+                    if key == 'len':
+                        # 总分	评分	组别	主管 共计4个
+                        column = column + value + 4
+                        continue
                     if key not in except_field:
                         # print(row, column, key, value)
                         worksheet.write(row, column, value, normal_format)

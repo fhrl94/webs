@@ -28,7 +28,9 @@
         </h3>
     </div>
     <table class="table">
+        {% if user_emp.status == True %}
         <a href="{% url 'index' %}" id="lj"></a>
+        {% endif %}
         <span id="cn">{{user_emp.next_section}}</span>
         <span id="cs">{{user_emp.consult_section}}</span>
         <caption>{{user_emp.get_department_display}}的{{user_emp.name}}，你好！<br/>

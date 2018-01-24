@@ -12,7 +12,9 @@
 
 ## 更新
 
-- 2018.1.23 【优化】已完成；bug-2、3修复；使用 jQuery 【home.js】调整最终页面
+- 2018.1.24 调整【home.js】、【home.html】修复bug-4；过滤器顺序调整
+
+- 2018.1.23 【优化】已完成；bug-2、3修复；使用 jQuery 【home.js】调整最终页面；新增【需求-8】
 
 - 2018.1.22 优先级更改为【优化】、 6 、 5 、7  ，以及bug-1修复
 
@@ -30,6 +32,8 @@
 2. 通过URL可以直接访问下一期问卷（视图 index_view() 需要检查是否有问卷)
 
 3. pdf、excel 数据异常修复
+
+4. home 页面，不需要填写的问卷，不应该有链接
 
 ## 使用说明
 
@@ -212,5 +216,33 @@ systemctl status nginx.service -l          查看 Nginx 错误信息
 
 优化：
 
-员工的问卷调查显示具体情况
+员工的问卷调查显示具体情况，显示如下
 
+<table>
+    <tbody>
+        <tr>
+            <td>第1期新员工调查问卷</td>
+            <td><div class="bool" id="wj1">已完成</div></td>
+        </tr>
+        <tr>
+            <td>第2期新员工调查问卷</td>
+            <td><div class="bool" id="wj2">已完成</div></td>
+        </tr>
+        <tr>
+            <td>第3期新员工调查问卷</td>
+            <td><div class="bool" id="wj3">已完成</div></td>
+        </tr>
+        <tr>
+            <td>第4期新员工调查问卷</td>
+            <td><div class="bool" id="wj4">已完成</div></td>
+        </tr>
+        <tr>
+            <td>第5期新员工调查问卷</td>
+            <td><div class="bool" id="wj5">已完成</div></td>
+        </tr>
+        <tr>
+            <td>第6期新员工调查问卷</td>
+            <td><div class="bool" id="wj6">已完成</div></td>
+        </tr>
+    </tbody>
+<table>

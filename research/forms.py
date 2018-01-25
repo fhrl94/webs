@@ -4,11 +4,28 @@ from .models import CustomerOne, InformationEmployees, CustomerTwo, CustomerThre
 
 
 class UserForm(forms.Form):
-    账号 = forms.CharField(max_length=20, widget=forms.TextInput(
+    user = forms.CharField(label=u"账号", max_length=20, widget=forms.TextInput(
         attrs={'class': 'user', 'placeholder': '请输入用户名', 'aria-describedby': 'sizing-addon1', }))
-    密码 = forms.CharField(max_length=20, widget=forms.PasswordInput(
+    pwd = forms.CharField(label=u"密码", max_length=20, widget=forms.PasswordInput(
         attrs={'class': 'user', 'placeholder': '请输入密码', 'aria-describedby': 'sizing-addon2', }))
-    pass
+
+
+class ChangePwdForm(forms.Form):
+    old_pwd = forms.CharField(label=u"原密码", max_length=20, widget=forms.PasswordInput(
+        attrs={'class': 'user', 'placeholder': '请输入原始密码', 'aria-describedby': 'sizing-addon1', }))
+    new_pwd1 = forms.CharField(label=u"新密码", max_length=20, widget=forms.PasswordInput(
+        attrs={'class': 'user', 'placeholder': '请输入新密码', 'aria-describedby': 'sizing-addon2', }))
+    new_pwd2 = forms.CharField(label=u"确认密码", max_length=20, widget=forms.PasswordInput(
+        attrs={'class': 'user', 'placeholder': '请再次输入新密码', 'aria-describedby': 'sizing-addon3', }))
+
+    def clean(self):
+        if not self.is_valid():
+            raise forms.ValidationError(u"所有项都为必填项")
+        elif self.cleaned_data['new_pwd1'] != self.cleaned_data['new_pwd2']:
+            raise forms.ValidationError(u"两次输入的新密码不一样")
+        else:
+            cleaned_data = super(ChangePwdForm, self).clean()
+        return cleaned_data
 
 
 self_fields = ['question_one', 'question_two', 'question_three', 'question_four', 'question_five', 'question_six',

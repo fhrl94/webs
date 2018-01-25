@@ -128,8 +128,35 @@ def home_form(request):
     auto_calculate(user_emp.pk)
     user_emp = InformationEmployees.objects.filter(emp_user=user.id).get()
     # 使用 js 来处理
-    return render(request, template_name='research/home.html',
-              context={'user_emp': user_emp,})
+    return render(request, template_name='research/home.html', context={'user_emp': user_emp, })
+
+
+@login_required(login_url="login")
+def change_pwd(request):
+    if request.method == 'POST':
+        form = ChangePwdForm(request.POST)
+        print(form.is_valid())
+        if form.is_valid():
+            cd = form.cleaned_data
+            # print(cd)
+            user = authenticate(username=request.user.username, password=cd['old_pwd'])
+            print(user)
+            if user is not None:
+                if user.is_active:
+                    user.set_password(cd['new_pwd1'])
+                    user.save()
+                    return error_404(request, '密码已修改，请重新登录')
+                else:
+                    return error_404(request, '禁止访问')
+            else:
+                return error_404(request, '原始密码错误')
+        else:
+            return render(request, template_name='research/change_pwd.html',
+                          context={'form': form, 'error': "2次密码不一致"})
+    else:
+        form = ChangePwdForm()
+    return render(request, template_name='research/change_pwd.html', context={'form': form})
+    pass
 
 
 def user_login(request):
@@ -142,7 +169,7 @@ def user_login(request):
         form = UserForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            user = authenticate(username=cd['账号'], password=cd['密码'])
+            user = authenticate(username=cd['user'], password=cd['pwd'])
             print(user)
             if user is not None:
                 if user.is_active:
@@ -182,18 +209,18 @@ def error_404(request, error_body):
 
 
 # TODO 实现装饰器
-def auto_calculate(ID):
+def auto_calculate(list_id):
     """
     计算 【入职天数】、【下一阶段阶段】、【理论阶段】
-    :param ID:
+    :param list_id:
     :return:
     """
     customer = {'161': 'y6', '133': 'y5', '105': 'y4', '77': 'y3', '49': 'y2', '28': 'y1', '-1': 'y0', }
     sell = {'90': 'k4', '60': 'k3', '30': 'k2', '14': 'k1', '-1': 'k0', }
-    if ID is None:
+    if list_id is None:
         result = InformationEmployees.objects.all()
     else:
-        result = InformationEmployees.objects.filter(pk=ID).all()
+        result = InformationEmployees.objects.filter(pk=list_id).all()
     for one in result:
         # print(one.enter_date)
         # print(type(one.enter_date))
@@ -305,8 +332,9 @@ def form_print(request, queryset):
                           r'<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">',
                           html)
             #  生成 HTML 文件
-            html_name = '{emp_name}-第{num}期问卷-组别{group}-主管{superior_name}.html'.format(
-                emp_name=one.name, num=j + 1, group=question.group, superior_name=question.superior_name)
+            html_name = '{emp_name}-第{num}期问卷-组别{group}-主管{superior_name}.html'.format(emp_name=one.name, num=j + 1,
+                                                                                       group=question.group,
+                                                                                       superior_name=question.superior_name)
             html_name = reg_exp(html_name)
             with open(file=sys.path[0] + '/research/temp/' + html_name, mode='w', encoding='utf-8') as f:
                 f.write(html)
@@ -324,8 +352,8 @@ def form_print(request, queryset):
     #  分类，将所有生成的 HTML 文件按照表单中填写的【直接上级】 进行汇总。可能出现兼职情况
     for key, value in zip_name_dict.items():
         temp_result = re.search(reg_result, key)
-        result_name = '{group}-{superior_name}-{num}份.zip'.format(
-            group=temp_result.group(2), superior_name=temp_result.group(1), num=len(value))
+        result_name = '{group}-{superior_name}-{num}份.zip'.format(group=temp_result.group(2),
+                                                                  superior_name=temp_result.group(1), num=len(value))
         zip_pack(value, result_name, path='/research/result/')
         download_list.append(sys.path[0] + '/research/result/' + result_name)
     #   下载的文件生成
@@ -440,7 +468,7 @@ def excel_download(request, queryset):
             if not table.objects.filter(employees_id=one.pk).exists():
                 # print(table.length_field)
                 #  选项长度，跳过的格数
-                emp_research_list += [{"len":table.length_field}]
+                emp_research_list += [{"len": table.length_field}]
                 continue
             question = table.objects.filter(employees_id=one.pk)
             # print(question.values())
@@ -471,17 +499,17 @@ def excel_write(excel_name, path, result_dict_list, ):
     :return:
     """
     # superior_name 需要体现出来
-    except_field = ['id', 'department',# 'group', # 'superior_name',
+    except_field = ['id', 'department',  # 'group', # 'superior_name',
                     'current_section', 'enter_days', 'tel', 'enter_date', 'employees_id', ]
     department_dict = {'k': '客发汇总表', 'y': '运值汇总表'}
     workbook = xlsxwriter.Workbook(sys.path[0] + path + excel_name)
     normal_format = workbook.add_format(
         {'valign': 'vcenter', 'align': 'center',  # https://xlsxwriter.readthedocs.io/format.html
-            'top': 1,  # 上边框，后面参数是线条宽度
-            'left': 1,  # 左边框
-            'right': 1,  # 右边框
-            'bottom': 1  # 底边框
-        })
+         'top': 1,  # 上边框，后面参数是线条宽度
+         'left': 1,  # 左边框
+         'right': 1,  # 右边框
+         'bottom': 1  # 底边框
+         })
     for group_key, group_value in result_dict_list.items():
         worksheet = workbook.get_worksheet_by_name(department_dict[group_key])
         if worksheet is None:

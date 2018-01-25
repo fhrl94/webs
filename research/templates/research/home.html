@@ -1,84 +1,62 @@
-{% extends 'research/base.html' %}
-{% block bootstrap3_extra_head %}
-{% endblock %}
-{% load bootstrap3 %}
-
-{% block title %}{% endblock %}
-{% block content %}
-<!--suppress HtmlUnknownTarget -->
-<nav class="navbar navbar-default" role="navigation">
-    <div class="container-fluid">
-    <div class="navbar-header">
-        <a class="navbar-brand" href="{% url 'home' %}">主页</a>
-    </div>
-    <div>
-        <ul class="nav navbar-nav">
-            <li class="active"><a href="#">调查问卷</a></li>
-        </ul>
-    </div>
-    <div class="nav navbar-right">
-        <a class="navbar-brand btn-warning" href="{% url 'logout' %}" >退出登录</a>
-    </div>
-    </div>
-</nav>
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h3 class="panel-title">
-            调查问卷列表
-        </h3>
-    </div>
-    <table class="table">
-        {% if user_emp.status == True %}
-        <a href="{% url 'index' %}" id="lj"></a>
-        {% endif %}
-        <span id="cn">{{user_emp.next_section}}</span>
-        <span id="cs">{{user_emp.consult_section}}</span>
-        <caption>{{user_emp.get_department_display}}的{{user_emp.name}}，你好！<br/>
-            当前已入职{{user_emp.enter_days}}天，
-            下个阶段为<span id="jd">{{user_emp.get_next_section_display}}</span>，
+{% extends 'research/home_base.html' %}
+{% block content_list %}
+    <div class="panel panel-primary" id="wj_list">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                调查问卷列表
+            </h3>
+        </div>
+        <table class="table">
             {% if user_emp.status == True %}
-            请点击下面链接填写问卷
-            {% else %}
-            不需要填写问卷
+            <a href="{% url 'index' %}" id="lj"></a>
             {% endif %}
-        </caption>
-        <thead>
-            <tr>
-            <th>问卷名称</th>
-            <th>当前状态</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>第1期新员工调查问卷</td>
-                <td><div class="bool" id="wj1">{{user_emp.section_one}}</div></td>
-            </tr>
-            <tr>
-                <td>第2期新员工调查问卷</td>
-                <td><div class="bool" id="wj2">{{user_emp.section_two}}</div></td>
-            </tr>
-            <tr>
-                <td>第3期新员工调查问卷</td>
-                <td><div class="bool" id="wj3">{{user_emp.section_three}}</div></td>
-            </tr>
-            <tr>
-                <td>第4期新员工调查问卷</td>
-                <td><div class="bool" id="wj4">{{user_emp.section_four}}</div></td>
-            </tr>
-            {% if user_emp.department == 'y' %}
-            <tr>
-                <td>第5期新员工调查问卷</td>
-                <td><div class="bool" id="wj5">{{user_emp.section_five}}</div></td>
-            </tr>
-            <tr>
-                <td>第6期新员工调查问卷</td>
-                <td><div class="bool" id="wj6">{{user_emp.section_six}}</div></td>
-            </tr>
-            {% endif %}
-        </tbody>
-    </table>
-</div>
-
+            <span id="cn">{{user_emp.next_section}}</span>
+            <span id="cs">{{user_emp.consult_section}}</span>
+            <caption>{{user_emp.get_department_display}}的{{user_emp.name}}，你好！<br/>
+                当前已入职{{user_emp.enter_days}}天，
+                下个阶段为<span id="jd">{{user_emp.get_next_section_display}}</span>，
+                {% if user_emp.status == True %}
+                请点击下面链接填写问卷
+                {% else %}
+                不需要填写问卷
+                {% endif %}
+            </caption>
+            <thead>
+                <tr>
+                <th>问卷名称</th>
+                <th>当前状态</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>第1期新员工调查问卷</td>
+                    <td><div class="bool" id="wj1">{{user_emp.section_one}}</div></td>
+                </tr>
+                <tr>
+                    <td>第2期新员工调查问卷</td>
+                    <td><div class="bool" id="wj2">{{user_emp.section_two}}</div></td>
+                </tr>
+                <tr>
+                    <td>第3期新员工调查问卷</td>
+                    <td><div class="bool" id="wj3">{{user_emp.section_three}}</div></td>
+                </tr>
+                <tr>
+                    <td>第4期新员工调查问卷</td>
+                    <td><div class="bool" id="wj4">{{user_emp.section_four}}</div></td>
+                </tr>
+                {% if user_emp.department == 'y' %}
+                <tr>
+                    <td>第5期新员工调查问卷</td>
+                    <td><div class="bool" id="wj5">{{user_emp.section_five}}</div></td>
+                </tr>
+                <tr>
+                    <td>第6期新员工调查问卷</td>
+                    <td><div class="bool" id="wj6">{{user_emp.section_six}}</div></td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
 {% block bootstrap3_extra_script %}
     <script type="text/javascript" src="/static/jQuery/home.js">

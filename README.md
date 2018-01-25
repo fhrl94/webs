@@ -14,7 +14,9 @@
 
 ## 更新
 
-- 2018.1.24 调整【home.js】、【home.html】修复bug-4；过滤器顺序调整
+- 2018.1.25 【进度列表-6】已完成；调整了【home】页面继承方式；
+
+- 2018.1.24 调整【home.js】、【home.html】修复bug-4；过滤器顺序调整；背景介绍整理；
 
 - 2018.1.23 【优化】已完成；bug-2、3修复；使用 jQuery 【home.js】调整最终页面；新增【需求-8】
 
@@ -80,16 +82,18 @@ systemctl status nginx.service -l          查看 Nginx 错误信息
             * research/.
                 * login.html 登录界面模板 表单为 UserForm
                 * base.html 基础模板， 继承了 Django-bootstrap3 中的模板
-                * 404.html 出错模板， 非 admin 和 research 的应用、错误网站、异常， 均指向此
-                * form.html 问卷表单模板， 使用 CustomerXXXForm 和 SellXXXForm 表单
+                * form.html 问卷表单模板，继承了 base.html ，使用 CustomerXXXForm 和 SellXXXForm 表单
                 * form_dump.html 导出问卷表单模板， 与 form.html 相似（无提交按钮以及bootstrap资源指向）
-                * home.html 主页模板， 登录后指向此
-                * logout.html 登出模板， 注销当前使用账户 
+                * home_base.html 导航栏模板，继承了 base.html
+                * 404.html 出错模板，继承了 home_base.html ，非 admin 和 research 的应用、错误网站、异常， 均指向此
+                * home.html 主页，继承了 home_base.html ， 登录后指向此
+                * logout.html 登出，继承了 home_base.html ， 注销当前使用账户 
+                * change_pwd.html 密码修改， 继承了 home_base.html 
         * admin.py 后台页面定制， 筛选、执行动作等待
-        * forms.py 表单设计， 包含 UserForm 、 CustomerXXXForm 、 SellXXXForm
+        * forms.py 表单设计， 包含 UserForm 、ChangePwdForm 、 CustomerXXXForm 、 SellXXXForm
         * models.py 数据库设计， 包含 InformationEmployees 、 CustomerXXX 、 SellXXX
-        * urls.py URL 表， index 、 home、 login 、 logout 、 error_404
-        * views.py 包含业务视图 index_view 、 home_form 、 user_login 、 user_logout 、 error_404 </br>
+        * urls.py URL 表， index 、 home、 login 、 logout 、 change_pwd 、 error_404
+        * views.py 包含业务视图 index_view 、 home_form 、 user_login 、 user_logout 、 change_pwd 、 error_404 </br>
         后台动作 auto_cal 、 html_download 、 excels_download </br>
         以及动作调用的函数 temp_form 、 reg_exp 、 zip_pack 、 clear_temp 、 file_iterator 、 download_file 、 excel_write
     * webs/.

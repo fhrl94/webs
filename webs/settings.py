@@ -9,11 +9,11 @@ https://docs.djangoproject.com/en/1.11/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
-
+import configparser
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-from django.conf import settings
+import platform
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'research',
     # bootstrap3 库
     'bootstrap3',
+    # Django APScheduler 库，实现定时任务
+    'django_apscheduler',
 ]
 
 
@@ -134,3 +136,17 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder"
 )
+
+conf = configparser.ConfigParser()
+if platform.system() == 'Windows':
+    conf.read("resource_python/webs.conf", encoding="utf-8-sig")
+else:
+    conf.read("resource_python/webs.conf")
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_SSL = True
+EMAIL_HOST = conf.get(section='email', option='smtp_server')
+EMAIL_PORT = conf.get(section='email', option='smtp_port')
+EMAIL_HOST_USER = conf.get(section='email', option='from_addr')
+EMAIL_HOST_PASSWORD = conf.get(section='email', option='password')
+DEFAULT_FROM_EMAIL = conf.get(section='email', option='from_addr_str')

@@ -13,16 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include
-from django.contrib import admin
+from django.conf.urls import url
 from research import views
-from django.contrib.auth import views as auth_views
 
-urlpatterns = [
-    url(r'^index/', view=views.index_view, name='index'),
-    url(r'^home/', view=views.home_form, name='home'),
-    url(r'^login/', view=views.user_login, name='login'),
-    url(r'^logout/', view=views.user_logout, name='logout'),
-    url(r'^change_pwd/', view=views.change_pwd, name='change_pwd'),
-    url(r'^', view=views.error_404, kwargs={'error_body': ''}, name='error_404'),
-]
+urlpatterns = [url(r'^index/', view=views.index_view, name='index'), url(r'^home/', view=views.home_form, name='home'),
+               url(r'^login/', view=views.user_login, name='login'),
+               url(r'^logout/', view=views.user_logout, name='logout'),
+               url(r'^change_pwd/', view=views.change_pwd, name='change_pwd'),
+               url(r'^', view=views.error_404, kwargs={'error_body': ''}, name='error_404'), ]
+
+# 报错需要注释这一句
+from resource_python import jobs

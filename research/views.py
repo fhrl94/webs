@@ -11,6 +11,7 @@ import re
 import xlsxwriter
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponse, HttpResponseRedirect, StreamingHttpResponse
 from django.shortcuts import render
 # Create your views here.
@@ -19,6 +20,7 @@ from django.utils.http import urlquote
 
 from research.forms import *
 from research.models import InformationEmployees
+from webs import settings
 
 section_list = ['section_one', 'section_two', 'section_three', 'section_four', 'section_five', 'section_six', ]
 form_customer = [CustomerOneForm, CustomerTwoForm, CustomerThreeForm, CustomerFourForm, CustomerFiveForm,
@@ -127,12 +129,19 @@ def home_form(request):
         return error_404(request, "用户关联错误，请联系管理员")
     auto_calculate(user_emp.pk)
     user_emp = InformationEmployees.objects.filter(emp_user=user.id).get()
+    if user_emp.pwd_status != True:
+        return change_pwd(request)
     # 使用 js 来处理
     return render(request, template_name='research/home.html', context={'user_emp': user_emp, })
 
 
 @login_required(login_url="login")
 def change_pwd(request):
+    login_user = getattr(request, 'user', None)
+    try:
+        user_emp = InformationEmployees.objects.filter(emp_user=login_user.id).get()
+    except:
+        return error_404(request, "用户关联错误，请联系管理员")
     if request.method == 'POST':
         form = ChangePwdForm(request.POST)
         print(form.is_valid())
@@ -145,6 +154,8 @@ def change_pwd(request):
                 if user.is_active:
                     user.set_password(cd['new_pwd1'])
                     user.save()
+                    user_emp.pwd_status = True
+                    user_emp.save()
                     return error_404(request, '密码已修改，请重新登录')
                 else:
                     return error_404(request, '禁止访问')
@@ -155,7 +166,11 @@ def change_pwd(request):
                           context={'form': form, 'error': "2次密码不一致"})
     else:
         form = ChangePwdForm()
-    return render(request, template_name='research/change_pwd.html', context={'form': form})
+    if user_emp.pwd_status != True:
+        error_str = "首次登录，请修改密码"
+    else:
+        error_str = None
+    return render(request, template_name='research/change_pwd.html', context={'form': form, 'error': error_str,})
     pass
 
 
@@ -562,4 +577,24 @@ def excel_write(excel_name, path, result_dict_list, ):
                         column += 1
             row += 1
     workbook.close()
+    pass
+
+def to_mail():
+    result = InformationEmployees.objects.filter(status=True).order_by("enter_days").all()
+    print(result)
+    if len(result):
+        from_email = settings.DEFAULT_FROM_EMAIL
+        # subject 主题 content 内容 to_addr 是一个列表，发送给哪些人
+        print(from_email, settings.conf.get(section='email', option='to_addr').split(','))
+        print(type(settings.conf.get(section='email', option='to_addr').split(',')))
+        content = render(None, template_name='research/email.html',
+                         context={'emp_list': result, }).getvalue().decode("utf-8")
+        msg = EmailMultiAlternatives("{today}的新人培养调查名单".format(today=datetime.date.today()),
+                                     content, from_email,
+                                     settings.conf.get(section='email', option='to_addr').split(','))
+        msg.content_subtype = "html"
+        # 添加附件（可选）
+        # msg.attach_file('./xxx.pdf')
+        # 发送
+        msg.send()
     pass

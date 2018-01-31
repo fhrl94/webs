@@ -6,11 +6,11 @@ from research.views import auto_calculate, form_print, excel_download
 
 
 class InformationEmployeesAdmin(admin.ModelAdmin):
-    list_display = ['name', 'department', 'group', 'superior_name', 'next_section', 'tel']
+    list_display = ['name', 'department', 'group', 'superior_name', 'next_section', 'tel', 'pwd_status', ]
     exclude = ['next_section', 'consult_section', 'enter_days', ]
     search_fields = ('name',)
     actions = ['auto_cal', 'html_download', 'excels_download', ]
-    list_filter = ['status', 'department', 'next_section', 'superior_name', 'group',]
+    list_filter = ['status', 'department', 'pwd_status', 'next_section', 'superior_name', 'group', ]
     ordering = ('-enter_days',)
     list_editable = ('group', 'tel',)
 
@@ -33,4 +33,4 @@ class InformationEmployeesAdmin(admin.ModelAdmin):
 admin.site.register(InformationEmployees, InformationEmployeesAdmin)
 # 设置站点标题
 admin.site.site_header = '新人线上调查管理系统'
-admin.site.site_title = '新人线上调查'  #  数据导出（分原始表单（HTML）、原始数据导出（excel））
+admin.site.site_title = '新人线上调查'  # 数据导出（分原始表单（HTML）、原始数据导出（excel））

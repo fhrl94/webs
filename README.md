@@ -116,6 +116,18 @@ systemctl status nginx.service -l          查看 Nginx 错误信息
             url(r'^research/', include('research.urls')),
         ```
         * wsgi.py 
+    * resource_python/.
+        * jobs.py 定时任务，需要 `pip install django-apscheduler` 
+        * webs.conf 邮箱配置
+        ```
+            [email]
+            smtp_server = smtp.qiye.163.com
+            smtp_port = 465
+            from_addr = xx@xx.com
+            from_addr_str = 线上调查站通知 <xx@xx.com>
+            password = xx_pwd
+            to_addr = a@xx.com,b@xx.com
+        ```
     * manage.py
     * README.md 说明文件
     * research_nginx.conf Nginx 配置文件
@@ -123,7 +135,8 @@ systemctl status nginx.service -l          查看 Nginx 错误信息
         
 ## 背景介绍
 
-新员工培养问卷调查，是针对运值和客发体系员工；入职后，通过周期的培养，对员工进行实名的调查反馈。该问卷主要分为【沟通与通知】、【数据录入与汇总】。
+新员工培养问卷调查，是针对运值和客发体系员工；入职后，通过周期的培养，对员工进行实名的调查反馈。
+该问卷主要分为【沟通与通知】、【数据录入与汇总】。
 
 一、沟通与通知：
 

@@ -22,5 +22,5 @@ urlpatterns = [url(r'^index/', view=views.index_view, name='index'), url(r'^home
                url(r'^change_pwd/', view=views.change_pwd, name='change_pwd'),
                url(r'^', view=views.error_404, kwargs={'error_body': ''}, name='error_404'), ]
 
-# 报错需要注释这一句
-from resource_python import jobs
+# 报错需要注释这一句，先转移到 uWSGI 中实现了
+# from resource_python import jobs

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from research.models import InformationEmployees
+from research.models import InformationEmployees, WriteHistory
 from research.views import auto_calculate, form_print, excel_download
 
 
@@ -29,8 +29,15 @@ class InformationEmployeesAdmin(admin.ModelAdmin):
     html_download.short_description = "html打包下载"
     excels_download.short_description = "excel表下载"
 
+class WriteHistoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'enter_date', 'current_section', 'employees', ]
+    search_fields = ('name',)
+    list_filter = ['current_section', 'enter_date', ]
+    ordering = ('-enter_date',)
+    date_hierarchy = 'enter_date'
 
 admin.site.register(InformationEmployees, InformationEmployeesAdmin)
+admin.site.register(WriteHistory, WriteHistoryAdmin)
 # 设置站点标题
 admin.site.site_header = '新人线上调查管理系统'
 admin.site.site_title = '新人线上调查'  # 数据导出（分原始表单（HTML）、原始数据导出（excel））

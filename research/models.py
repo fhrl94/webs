@@ -377,3 +377,13 @@ class SellFour(models.Model):
         return self.employees.name
 
     pass
+
+class WriteHistory(models.Model):
+    """
+
+    """
+    name = models.CharField('姓名', max_length=10)
+    enter_date = models.DateTimeField('填表时间', )
+    current_section = models.CharField('已填写的阶段', max_length=2, choices=Section_CHOICES, )
+    employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
+    pass

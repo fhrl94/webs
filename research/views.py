@@ -19,7 +19,7 @@ from django.urls import reverse
 from django.utils.http import urlquote
 
 from research.forms import *
-from research.models import InformationEmployees
+from research.models import InformationEmployees, WriteHistory
 from webs import settings
 
 section_list = ['section_one', 'section_two', 'section_three', 'section_four', 'section_five', 'section_six', ]
@@ -88,6 +88,8 @@ def index_view(request):
             print(getattr(user_emp, section_list[int(user_emp.next_section[1]) - 1]))
             setattr(user_emp, section_list[int(user_emp.next_section[1]) - 1], True)
             user_emp.save()
+            # 需要在计算之前保存历史记录
+            write_history(user_emp)
             # 保存完毕后进行计算
             auto_calculate(user_emp.pk)
             return HttpResponseRedirect(reverse(home_form))
@@ -597,4 +599,14 @@ def to_mail():
         # msg.attach_file('./xxx.pdf')
         # 发送
         msg.send()
+    pass
+
+def write_history(emp_user):
+    wh = WriteHistory()
+    wh.name = emp_user.name
+    print(datetime.datetime.now())
+    wh.enter_date = datetime.datetime.now()
+    wh.current_section = emp_user.next_section
+    wh.employees = emp_user
+    wh.save()
     pass

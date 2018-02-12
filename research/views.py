@@ -602,6 +602,7 @@ def to_mail():
     pass
 
 def write_history(emp_user):
+    auto_calculate(None)
     wh = WriteHistory()
     wh.name = emp_user.name
     print(datetime.datetime.now())

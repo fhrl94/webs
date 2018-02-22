@@ -582,6 +582,7 @@ def excel_write(excel_name, path, result_dict_list, ):
     pass
 
 def to_mail():
+    auto_calculate(None)
     result = InformationEmployees.objects.filter(status=True).order_by("enter_days").all()
     print(result)
     if len(result):
@@ -602,7 +603,6 @@ def to_mail():
     pass
 
 def write_history(emp_user):
-    auto_calculate(None)
     wh = WriteHistory()
     wh.name = emp_user.name
     print(datetime.datetime.now())

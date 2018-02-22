@@ -35,6 +35,13 @@ class WriteHistoryAdmin(admin.ModelAdmin):
     list_filter = ['current_section', 'enter_date', ]
     ordering = ('-enter_date',)
     date_hierarchy = 'enter_date'
+    actions = ['html_download', ]
+
+    def html_download(self, request, queryset):
+        return form_print(request, queryset, type=True)
+        pass
+
+    html_download.short_description = "html打包下载"
 
 admin.site.register(InformationEmployees, InformationEmployeesAdmin)
 admin.site.register(WriteHistory, WriteHistoryAdmin)

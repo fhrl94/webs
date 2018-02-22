@@ -298,7 +298,7 @@ def temp_form(request, user_form, user_emp, j, one):
 
 
 @login_required(login_url="login")
-def form_print(request, queryset):
+def form_print(request, queryset, type=None):
     """
     根据【列表】，将已填写的表单存储、打包，下载。 实现功能
     2. 填写的问卷能在线导出（美观）， 同时按列方式打包
@@ -319,6 +319,12 @@ def form_print(request, queryset):
         # print(type(one))
         # print(one.__dict__)
         file_name_list = []
+        if type != None:
+            # print(one.employees)
+            # one = InformationEmployees.objects.filter(pk=one.employees).get()
+            # print(one)
+            one = one.employees
+            pass
         if one.department == "y":
             forms = form_customer
             tables = table_customer

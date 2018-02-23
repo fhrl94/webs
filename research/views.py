@@ -375,6 +375,8 @@ def form_print(request, queryset, type=None):
     #  分类，将所有生成的 HTML 文件按照表单中填写的【直接上级】 进行汇总。可能出现兼职情况
     for key, value in zip_name_dict.items():
         temp_result = re.search(reg_result, key)
+        # 数组去重
+        value = sorted(set(value), key=value.index)
         result_name = '{group}-{superior_name}-{num}份.zip'.format(group=temp_result.group(2),
                                                                   superior_name=temp_result.group(1), num=len(value))
         zip_pack(value, result_name, path='/research/result/')

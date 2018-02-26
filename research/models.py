@@ -58,6 +58,7 @@ class InformationEmployees(models.Model):
     status = models.BooleanField('需要填写调查问卷')
     emp_user = models.OneToOneField(User, )
     pwd_status = models.BooleanField('密码是否修改')
+    emp_status = models.BooleanField('是否离职')
 
     def __str__(self):
         return self.name

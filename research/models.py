@@ -63,6 +63,10 @@ class InformationEmployees(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = '问卷填写人基本信息'
+        verbose_name_plural = verbose_name
+
     pass
 
 
@@ -387,4 +391,9 @@ class WriteHistory(models.Model):
     enter_date = models.DateTimeField('填表时间', )
     current_section = models.CharField('已填写的阶段', max_length=2, choices=Section_CHOICES, )
     employees = models.ForeignKey(InformationEmployees, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = '问卷填写历史记录'
+        verbose_name_plural = verbose_name
+
     pass

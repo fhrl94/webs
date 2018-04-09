@@ -12,7 +12,7 @@ class InformationEmployeesAdmin(admin.ModelAdmin):
     actions = ['auto_cal', 'html_download', 'excels_download', ]
     list_filter = ['status', 'department', 'pwd_status', 'emp_status', 'next_section', 'superior_name', 'group', ]
     ordering = ('-enter_days',)
-    list_editable = ('group', 'tel',)
+    list_editable = ('group', 'tel', 'superior_name')
 
     def auto_cal(self, request, queryset):
         return auto_calculate(None)

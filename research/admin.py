@@ -9,7 +9,7 @@ class InformationEmployeesAdmin(admin.ModelAdmin):
     list_display = ['name', 'department', 'group', 'superior_name', 'next_section', 'tel', 'pwd_status', ]
     exclude = ['next_section', 'consult_section', 'enter_days', ]
     search_fields = ('name',)
-    actions = ['auto_cal', 'html_download', 'excels_download', ]
+    actions = ['auto_cal', 'html_download', 'excels_download', 'to_mail_test']
     list_filter = ['status', 'department', 'pwd_status', 'emp_status', 'next_section', 'superior_name', 'group', ]
     ordering = ('-enter_days',)
     list_editable = ('group', 'tel', 'superior_name')

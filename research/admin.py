@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from research.models import InformationEmployees, WriteHistory
-from research.views import auto_calculate, form_print, excel_download
+from research.views import auto_calculate, form_print, excel_download, to_mail
 
 
 class InformationEmployeesAdmin(admin.ModelAdmin):
@@ -25,9 +25,14 @@ class InformationEmployeesAdmin(admin.ModelAdmin):
     def excels_download(self, request, queryset):
         return excel_download(request, queryset)
 
+    def to_mail_test(self, request, queryset):
+        to_mail()
+        pass
+
     auto_cal.short_description = "自动计算入职天数、下个填写阶段"
     html_download.short_description = "html打包下载"
     excels_download.short_description = "excel表下载"
+    to_mail_test.short_description = '邮件发送'
 
 class WriteHistoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'enter_date', 'current_section', 'employees', ]

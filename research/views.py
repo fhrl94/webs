@@ -477,6 +477,7 @@ def excel_download(request, queryset):
     :param queryset: 选择的人员列表
     :return:
     """
+    assert isinstance(queryset[0], InformationEmployees), "使用错误，列表必须为 InformationEmployees 对象"
     clear_temp()
     result_dict = {}
     for one in queryset:

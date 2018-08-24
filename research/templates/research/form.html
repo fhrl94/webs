@@ -23,22 +23,14 @@
     </tr>
     <tr>
         <td>培养周期</td>
-        <td>{{user_emp.get_next_section_display}}</td>
-        <td>入职天数</td>
-        <td>{{user_emp.enter_days}}天</td>
-        <td>填表人</td>
-        <td>{{user_emp.name}}</td>
-    </tr>
-    <tr>
-        <td>联系方式</td>
-        <td colspan="2">{{user_emp.tel}}</td>
+        <td colspan="2">{{user_emp.get_next_section_display}}</td>
         <td>填表时间</td>
         <td colspan="2">{{today}}</td>
     </tr>
     <tr>
-        <td colspan="5" class="bold">评估事项<br>
+        <td colspan="5" class="bold">评估事项(<strong>不记名调查问卷,请如实填写</strong>)<br>
             （10-9分：很好；6-8分：较好；3-5分：较差；0-2分：很差）</td>
-        <td class="bold">评估分数</td>
+        <td class="bold text-center">评估分数</td>
     </tr>
     <form method="post" role="form">
         {% csrf_token %}

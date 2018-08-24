@@ -355,7 +355,7 @@ def form_print(request, queryset, type=None):
                           r'<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">',
                           html)
             #  生成 HTML 文件
-            html_name = '{emp_name}-第{num}期问卷-组别{group}-主管{superior_name}.html'.format(emp_name=one.name, num=j + 1,
+            html_name = '新人问卷【{emp_name}】-第{num}期问卷-组别{group}-主管{superior_name}.html'.format(emp_name=one.pk, num=j + 1,
                                                                                        group=question.group,
                                                                                        superior_name=question.superior_name)
             html_name = reg_exp(html_name)

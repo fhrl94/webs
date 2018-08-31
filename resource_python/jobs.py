@@ -9,7 +9,7 @@ scheduler = BackgroundScheduler()
 scheduler.add_jobstore(DjangoJobStore(), "default")
 
 
-@register_job(scheduler, "cron", hour=4, minute=0, id="auto_calculate", replace_existing=True)
+@register_job(scheduler, "cron", hour=4, minute=0, id="auto_calculate", replace_existing=True, misfire_grace_time=60*1)
 def test_job():
     to_mail()
 
